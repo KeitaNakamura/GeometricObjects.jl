@@ -20,21 +20,21 @@ function moment_of_inertia(line::Line{2})
     a, b = line
     v = b - a
     l² = v ⋅ v
-    line.m * @Mat [0 0 0
-                   0 0 0
-                   0 0 l²/12]
+    line.m * symmetric(@Mat([0 0 0
+                             0 0 0
+                             0 0 l²/12]), :U)
 end
 
 function moment_of_inertia(line::Line{3, T}) where {T}
     a, b = line
     v = b - a
     l² = v ⋅ v
-    I = line.m * @Mat [l²/12 0     0
-                       0     l²/12 0
-                       0     0     0]
+    I = line.m * symmetric(@Mat([l²/12 0     0
+                                 0     l²/12 0
+                                 0     0     0]), :U)
     zaxis = Vec{3, T}(0,0,1)
     R = rotmat(zaxis => v/sqrt(l²))
-    R ⋅ I ⋅ R'
+    ratate(I, R)
 end
 
 function _distance(line::Line, x::Vec)

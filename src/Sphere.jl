@@ -14,11 +14,11 @@ center(x::Sphere) = @inbounds x.coordinates[1]
 radius(x::Sphere) = x.r
 
 function moment_of_inertia(x::Sphere)
-    R = radius(x)
-    I = 2R^2 / 5
-    x.m * @Mat [I 0 0
-                0 I 0
-                0 0 I]
+    r = radius(x)
+    I = 2r^2 / 5
+    x.m * symmetric(@Mat([I 0 0
+                          0 I 0
+                          0 0 I]), :U)
 end
 
 distance(line::Line, x::Sphere) = distance(line, center(x), radius(x))
@@ -42,10 +42,10 @@ radius(x::Disk) = x.r
 
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html
 function moment_of_inertia(x::Disk{2})
-    R = radius(x)
-    x.m * @Mat [0 0 0
-                0 0 0
-                0 0 R^2/2]
+    r = radius(x)
+    x.m * symmetric(@Mat([0 0 0
+                          0 0 0
+                          0 0 r^2/2]), :U)
 end
 
 distance(line::Line, x::Disk) = distance(line, center(x), radius(x))
