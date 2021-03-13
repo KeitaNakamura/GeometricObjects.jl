@@ -2,15 +2,14 @@ mutable struct Sphere{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
     r::T
     m::T
-    I::Mat{3, 3, T}
     v::Vec{dim, T}
-    θ::Vec{3, T}
     ω::Vec{3, T}
+    q::Quaternion{T}
 end
 
 Sphere(center::Vec, r::Real) = GeometricObject(Sphere, [center], r)
 
-center(x::Sphere) = @inbounds x.coordinates[1]
+center(x::Sphere) = @inbounds x[1]
 radius(x::Sphere) = x.r
 
 function moment_of_inertia(x::Sphere)
@@ -29,15 +28,14 @@ mutable struct Disk{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
     r::T
     m::T
-    I::Mat{3, 3, T}
     v::Vec{dim, T}
-    θ::Vec{3, T}
     ω::Vec{3, T}
+    q::Quaternion{T}
 end
 
 Disk(center::Vec{dim}, r::Real) where {dim} = GeometricObject(Disk, [center], r)
 
-center(x::Disk) = @inbounds x.coordinates[1]
+center(x::Disk) = @inbounds x[1]
 radius(x::Disk) = x.r
 
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html

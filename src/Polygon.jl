@@ -1,10 +1,9 @@
 mutable struct Polygon{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
     m::T
-    I::Mat{3, 3, T}
     v::Vec{dim, T}
-    θ::Vec{3, T}
     ω::Vec{3, T}
+    q::Quaternion{T}
 end
 
 _projection(v::Vec{2}, ::Nothing, ::Nothing, ::Nothing) = v
@@ -13,7 +12,8 @@ _projection(v::Vec{2}, ::Nothing, y::Real, ::Nothing) = Vec(v[2], y, v[1]) # (z,
 _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,y)
 
 function Polygon(coordinates::Vector{<: Vec{2}}; x = nothing, y = nothing, z = nothing)
-    GeometricObject(Polygon, _projection.(coordinates, x, y, z))
+    coords = _projection.(coordinates, x, y, z)
+    GeometricObject(Polygon, coords)
 end
 
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}

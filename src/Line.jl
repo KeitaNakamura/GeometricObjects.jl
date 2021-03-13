@@ -5,10 +5,9 @@
 mutable struct Line{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
     m::T
-    I::Mat{3, 3, T}
     v::Vec{dim, T}
-    θ::Vec{3, T}
     ω::Vec{3, T}
+    q::Quaternion{T}
 end
 
 Line(a::Vec, b::Vec) = GeometricObject(Line, [a, b])
