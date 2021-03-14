@@ -18,7 +18,7 @@ export
 # Polygon
     Polygon,
     Rectangle,
-    isinside,
+    within,
 # Sphere/Disk
     Sphere,
     Disk,

@@ -149,7 +149,7 @@ function isonline(line::Line{2}, X::Vec{2})
     false
 end
 
-# helper function for `isinside`
+# helper function for `within`
 function ray_casting_to_right(line::Line{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]

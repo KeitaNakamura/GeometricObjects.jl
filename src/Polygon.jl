@@ -87,11 +87,11 @@ function Base.eachline(poly::Polygon)
 end
 
 """
-    isinside(::Polygon, x::Vec; include_bounds = true)
+    within(x::Vec, ::Polygon; include_bounds = true)
 
-Check if `x` is inside of polygon.
+Check if `x` is within a polygon.
 """
-function isinside(poly::Polygon{2}, x::Vec{2}; include_bounds::Bool = true)
+function within(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
     for line in eachline(poly)
         isonline(line, x) && return include_bounds
