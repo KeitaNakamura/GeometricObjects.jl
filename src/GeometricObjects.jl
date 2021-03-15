@@ -8,7 +8,7 @@ using Base: @_propagate_inbounds_meta
 export
     GeometricObject,
     coordinates,
-    center,
+    centroid,
     moment_of_inertia,
 # Line
     Line,

@@ -13,7 +13,7 @@ end
 Line(a::Vec, b::Vec) = GeometricObject(Line, [a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
-center(line::Line) = sum(line) / 2
+centroid(line::Line) = sum(line) / 2
 
 function moment_of_inertia(line::Line{2})
     a, b = line

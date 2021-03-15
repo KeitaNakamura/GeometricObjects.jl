@@ -10,7 +10,7 @@ end
 
 coordinates(x::GeometricObject) = x.coordinates
 
-centered(x::GeometricObject) = x .- center(x)
+centered(x::GeometricObject) = x .- centroid(x)
 
 Base.size(x::GeometricObject) = size(coordinates(x))
 
@@ -28,12 +28,12 @@ end
 moment_of_inertia(x::GeometricObject) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
 function velocityat(obj::GeometricObject{3}, x::Vec{3})
-    r = x - center(obj)
+    r = x - centroid(obj)
     obj.v + obj.ω × r
 end
 
 function velocityat(obj::GeometricObject{2}, x::Vec{2})
-    r = x - center(obj)
+    r = x - centroid(obj)
     @inbounds begin
         v3 = obj.ω × Vec(r[1], r[2], 0)
         obj.v + Vec(v3[1], v3[2])
@@ -58,7 +58,7 @@ function update_position!(obj::GeometricObject, dt::Real)
 
     # v and ω need to be updated in advance
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
-    xc = center(obj) + obj.v * dt
+    xc = centroid(obj) + obj.v * dt
     dq = exp(Quaternion(ω*dt/2))
     r = centered(obj)
 

@@ -17,7 +17,7 @@
     line = @inferred Line(a, b)
     @test (@inferred Line(a => b)) == line
     line.m = 2.0
-    @test center(line) == (line[1] + line[2]) / 2
+    @test centroid(line) == (line[1] + line[2]) / 2
     @test normalunit(line) ≈ [0.0,-1.0]
     # 1
     @test distance(line, Vec(0.2,0.6)) ≈ [0.0,0.4] - [0.0,0.6]

@@ -35,7 +35,7 @@ end
 end
 
 # https://en.wikipedia.org/wiki/Centroid
-function center(poly::Polygon{dim, T}) where {dim, T}
+function centroid(poly::Polygon{dim, T}) where {dim, T}
     A = zero(T)
     x_c = zero(T)
     y_c = zero(T)
