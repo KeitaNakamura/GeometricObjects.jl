@@ -96,7 +96,7 @@ function distance(line::Line, x::Vec, r::Real)
 end
 
 """
-    perpendicularfoot(::Line, x::Vec)
+    GeometricObjects.perpendicularfoot(::Line, x::Vec)
 
 Compute the position of perpendicular foot.
 """

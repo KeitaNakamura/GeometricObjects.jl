@@ -18,31 +18,31 @@
     @test (@inferred Line(a => b)) == line
     line.m = 2.0
     @test centroid(line) == (line[1] + line[2]) / 2
-    @test normalunit(line) ≈ [0.0,-1.0]
+    @test GeometricObjects.normalunit(line) ≈ [0.0,-1.0]
     # 1
     @test distance(line, Vec(0.2,0.6)) ≈ [0.0,0.4] - [0.0,0.6]
     @test distance(line, Vec(0.2,0.6), r) === nothing
-    @test perpendicularfoot(line, Vec(0.2,0.6)) ≈ [0.2,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.2,0.6)) ≈ [0.2,0.4]
     # 2
     @test distance(line, Vec(0.4,0.6)) ≈ [0.0,0.4] - [0.0,0.6]
     @test distance(line, Vec(0.4,0.6), r) === nothing
-    @test perpendicularfoot(line, Vec(0.4,0.6)) ≈ [0.4,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.4,0.6)) ≈ [0.4,0.4]
     # 3
     @test distance(line, Vec(0.6,0.6)) ≈ [0.0,0.4] - [0.0,0.6]
     @test distance(line, Vec(0.6,0.6), r) === nothing
-    @test perpendicularfoot(line, Vec(0.6,0.6)) ≈ [0.6,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.6,0.6)) ≈ [0.6,0.4]
     # 4
     @test distance(line, Vec(0.2,0.2)) ≈ [0.0,0.4] - [0.0,0.2]
     @test distance(line, Vec(0.2,0.2), r) ≈ [0.3,0.4] - [0.2,0.2]
-    @test perpendicularfoot(line, Vec(0.2,0.2)) ≈ [0.2,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.2,0.2)) ≈ [0.2,0.4]
     # 5
     @test distance(line, Vec(0.4,0.2)) ≈ [0.0,0.4] - [0.0,0.2]
     @test distance(line, Vec(0.4,0.2), r) ≈ [0.4,0.4] - [0.4,0.2]
-    @test perpendicularfoot(line, Vec(0.4,0.2)) ≈ [0.4,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.4,0.2)) ≈ [0.4,0.4]
     # 6
     @test distance(line, Vec(0.6,0.2)) ≈ [0.0,0.4] - [0.0,0.2]
     @test distance(line, Vec(0.6,0.2), r) ≈ [0.5,0.4] - [0.6,0.2]
-    @test perpendicularfoot(line, Vec(0.6,0.2)) ≈ [0.6,0.4]
+    @test GeometricObjects.perpendicularfoot(line, Vec(0.6,0.2)) ≈ [0.6,0.4]
 
     # check update! function
     ## 2D
