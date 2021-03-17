@@ -33,7 +33,7 @@ function moment_of_inertia(line::Line{3, T}) where {T}
                                  0     0     0]), :U)
     zaxis = Vec{3, T}(0,0,1)
     R = rotmat(zaxis => v/sqrt(l²))
-    ratate(I, R)
+    rotate(I, R)
 end
 
 function _distance(line::Line, x::Vec)

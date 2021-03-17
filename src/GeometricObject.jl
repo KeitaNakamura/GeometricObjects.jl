@@ -42,7 +42,7 @@ end
 
 function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{3}) where {T}
     V, P = eigen(I)
-    A⁻¹ = SymmetricSecondOrderTensor{3}((i,j) -> @inbounds i == j ? (V[i] ≈ 0 ? V[i] : inv(V[i])) : zero(T))
+    A⁻¹ = SymmetricSecondOrderTensor{3}((i,j) -> @inbounds i == j ? (abs(V[i]) < sqrt(eps(T)) ? V[i] : inv(V[i])) : zero(T))
     symmetric(P ⋅ A⁻¹ ⋅ inv(P), :U)
 end
 
@@ -52,7 +52,7 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
                     0 0 inv(I[3,3])]), :U)
 end
 
-function update_position!(obj::GeometricObject, dt::Real)
+function update_position!(obj::GeometricObject{dim}, dt::Real) where {dim}
     ω = obj.ω
     q = obj.q
 
@@ -63,7 +63,7 @@ function update_position!(obj::GeometricObject, dt::Real)
     r = centered(obj)
 
     @inbounds for i in eachindex(obj)
-        obj[i] = xc + Vec2((dq * r[i] / dq).vector)
+        obj[i] = xc + ToVec(Val(dim), (dq * r[i] / dq).vector)
     end
     obj.q = dq * q
 
