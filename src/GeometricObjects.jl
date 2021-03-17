@@ -16,9 +16,9 @@ export
 # Polygon
     Polygon,
     Rectangle,
-# Sphere/Disk
+# Sphere/Circle
     Sphere,
-    Disk,
+    Circle,
     radius
 
 include("utils.jl")

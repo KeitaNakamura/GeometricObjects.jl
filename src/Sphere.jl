@@ -84,7 +84,7 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
 end
 
 
-mutable struct Disk{dim, T} <: GeometricObject{dim, T}
+mutable struct Circle{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
     r::T
     m::T
@@ -93,20 +93,20 @@ mutable struct Disk{dim, T} <: GeometricObject{dim, T}
     q::Quaternion{T}
 end
 
-Disk(centroid::Vec{dim}, r::Real) where {dim} = GeometricObject(Disk, [centroid], r)
+Circle(centroid::Vec{dim}, r::Real) where {dim} = GeometricObject(Circle, [centroid], r)
 
-centroid(x::Disk) = @inbounds x[1]
-radius(x::Disk) = x.r
+centroid(x::Circle) = @inbounds x[1]
+radius(x::Circle) = x.r
 
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html
-function moment_of_inertia(x::Disk{2})
+function moment_of_inertia(x::Circle{2})
     r = radius(x)
     x.m * symmetric(@Mat([0 0 0
                           0 0 0
                           0 0 r^2/2]), :U)
 end
 
-to_sphere(disk::Disk) = Sphere(coordinates(disk), radius(disk))
-within(disk::Disk, x::Vec{2}; include_bounds::Bool = true) = within(to_sphere(disk), x; include_bounds)
-distance(disk::Disk, x::Vec{2}) = distance(to_sphere(disk), x)
-distance(disk::Disk, x::Vec{2}, r::Real) = distance(to_sphere(disk), x, r)
+to_sphere(disk::Circle) = Sphere(coordinates(disk), radius(disk))
+within(disk::Circle, x::Vec{2}; include_bounds::Bool = true) = within(to_sphere(disk), x; include_bounds)
+distance(disk::Circle, x::Vec{2}) = distance(to_sphere(disk), x)
+distance(disk::Circle, x::Vec{2}, r::Real) = distance(to_sphere(disk), x, r)
