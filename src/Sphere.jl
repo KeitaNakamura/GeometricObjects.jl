@@ -79,7 +79,7 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
     v = centroid(sphere) - x
     norm_v = norm(v)
     d = norm_v - radius(sphere)
-    d - r ≤ 0 && return (d - r) * (v / norm_v)
+    d - r ≤ 0 && return d * (v / norm_v)
     nothing
 end
 
