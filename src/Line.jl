@@ -113,9 +113,9 @@ function normalunit(line::Line{2})
 end
 
 """
-    within(x::Vec, line::Line)
+    in(x::Vec, line::Line)
 
-Check if `x` is within line.
+Check if `x` is `in` line.
 
 # Examples
 ```jldoctest
@@ -124,19 +124,19 @@ julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
  [0.0, 0.0]
  [2.0, 2.0]
 
-julia> within(@Vec[1.0, 1.0], line)
+julia> @Vec[1.0, 1.0] in line
 true
 
-julia> within(@Vec[1.0, 0.0], line)
+julia> @Vec[1.0, 0.0] in line
 false
 ```
 """
-function within(x::Vec, line::Line)
+function Base.in(x::Vec, line::Line)
     d, scale = _distance(line, x)
     0 ≤ scale ≤ 1 && (d ⋅ d) < eps(eltype(d))
 end
 # much faster for 2D
-function within(X::Vec{2}, line::Line{2})
+function Base.in(X::Vec{2}, line::Line{2})
     @inbounds begin
         x, y = X[1], X[2]
         a, b = line
@@ -151,7 +151,7 @@ function within(X::Vec{2}, line::Line{2})
     false
 end
 
-# helper function for `within`
+# helper function for `in(x, polygon)`
 function ray_casting_to_right(line::Line{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]

@@ -87,14 +87,14 @@ function Base.eachline(poly::Polygon)
 end
 
 """
-    within(x::Vec, ::Polygon; include_bounds = true)
+    in(x::Vec, ::Polygon; include_bounds = true)
 
-Check if `x` is within a polygon.
+Check if `x` is `in` a polygon.
 """
-function within(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
+function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
     for line in eachline(poly)
-        within(x, line) && return include_bounds
+        x in line && return include_bounds
         I += ray_casting_to_right(line, x)
     end
     isodd(I)

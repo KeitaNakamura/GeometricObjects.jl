@@ -21,23 +21,23 @@ function moment_of_inertia(x::Sphere)
 end
 
 """
-    within(x::Vec, ::Sphere; include_bounds = true)
+    in(x::Vec, ::Sphere; include_bounds = true)
 
-Check if `x` is within a sphere.
+Check if `x` is `in` a sphere.
 
 ```jldoctest
 julia> sphere = Sphere(Vec(1.0,1.0), 1.0)
 1-element Sphere{2,Float64}:
  [1.0, 1.0]
 
-julia> within(Vec(0.5, 0.5), sphere)
+julia> Vec(0.5, 0.5) in sphere
 true
 
-julia> within(Vec(0.0, 0.0), sphere)
+julia> Vec(0.0, 0.0) in sphere
 false
 ```
 """
-function within(x::Vec{dim}, sphere::Sphere{dim}; include_bounds::Bool = true) where {dim}
+function Base.in(x::Vec{dim}, sphere::Sphere{dim}; include_bounds::Bool = true) where {dim}
     c = centroid(sphere)
     d = (x - c)
     d² = d ⋅ d
@@ -107,6 +107,6 @@ function moment_of_inertia(x::Circle{2})
 end
 
 to_sphere(disk::Circle) = Sphere(coordinates(disk), radius(disk))
-within(disk::Circle, x::Vec{2}; include_bounds::Bool = true) = within(to_sphere(disk), x; include_bounds)
+Base.in(disk::Circle, x::Vec{2}; include_bounds::Bool = true) = in(to_sphere(disk), x; include_bounds)
 distance(disk::Circle, x::Vec{2}) = distance(to_sphere(disk), x)
 distance(disk::Circle, x::Vec{2}, r::Real) = distance(to_sphere(disk), x, r)
