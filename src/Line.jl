@@ -113,7 +113,7 @@ function normalunit(line::Line{2})
 end
 
 """
-    GeometricObjects.isonline(line::Line, x::Vec)
+    GeometricObjects.isonline(x::Vec, line::Line)
 
 Return `true` if `x` is on `line`.
 
@@ -124,19 +124,19 @@ julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
  [0.0, 0.0]
  [2.0, 2.0]
 
-julia> GeometricObjects.isonline(line, @Vec[1.0, 1.0])
+julia> GeometricObjects.isonline(@Vec[1.0, 1.0], line)
 true
 
-julia> GeometricObjects.isonline(line, @Vec[1.0, 0.0])
+julia> GeometricObjects.isonline(@Vec[1.0, 0.0], line)
 false
 ```
 """
-function isonline(line::Line, x::Vec)
+function isonline(x::Vec, line::Line)
     d, scale = _distance(line, x)
     0 ≤ scale ≤ 1 && (d ⋅ d) < eps(eltype(d))
 end
 # much faster for 2D
-function isonline(line::Line{2}, X::Vec{2})
+function isonline(X::Vec{2}, line::Line{2})
     @inbounds begin
         x, y = X[1], X[2]
         a, b = line

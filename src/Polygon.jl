@@ -94,7 +94,7 @@ Check if `x` is within a polygon.
 function within(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
     for line in eachline(poly)
-        isonline(line, x) && return include_bounds
+        isonline(x, line) && return include_bounds
         I += ray_casting_to_right(line, x)
     end
     isodd(I)
