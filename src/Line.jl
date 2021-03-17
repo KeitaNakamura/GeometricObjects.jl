@@ -113,19 +113,21 @@ function normalunit(line::Line{2})
 end
 
 """
-    isonline(line::Line, x::Vec)
+    GeometricObjects.isonline(line::Line, x::Vec)
 
 Return `true` if `x` is on `line`.
 
 # Examples
 ```jldoctest
 julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
-Line{2,Float64}([0.0, 0.0], [2.0, 2.0])
+2-element Line{2,Float64}:
+ [0.0, 0.0]
+ [2.0, 2.0]
 
-julia> isonline(line, @Vec[1.0, 1.0])
+julia> GeometricObjects.isonline(line, @Vec[1.0, 1.0])
 true
 
-julia> isonline(line, @Vec[1.0, 0.0])
+julia> GeometricObjects.isonline(line, @Vec[1.0, 0.0])
 false
 ```
 """

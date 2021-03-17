@@ -38,7 +38,7 @@ false
 ```
 """
 function within(x::Vec{dim}, sphere::Sphere{dim}; include_bounds::Bool = true) where {dim}
-    c = center(sphere)
+    c = centroid(sphere)
     d = (x - c)
     d² = d ⋅ d
     r² = radius(sphere)^2
@@ -69,14 +69,14 @@ true
 ```
 """
 function distance(sphere::Sphere{dim}, x::Vec{dim}) where {dim}
-    v = center(sphere) - x
+    v = centroid(sphere) - x
     norm_v = norm(v)
     d = norm_v - radius(sphere)
     d * (v / norm_v)
 end
 
 function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
-    v = center(sphere) - x
+    v = centroid(sphere) - x
     norm_v = norm(v)
     d = norm_v - radius(sphere)
     d - r ≤ 0 && return (d - r) * (v / norm_v)
