@@ -113,9 +113,9 @@ function normalunit(line::Line{2})
 end
 
 """
-    GeometricObjects.isonline(x::Vec, line::Line)
+    within(x::Vec, line::Line)
 
-Return `true` if `x` is on `line`.
+Check if `x` is within line.
 
 # Examples
 ```jldoctest
@@ -124,19 +124,19 @@ julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
  [0.0, 0.0]
  [2.0, 2.0]
 
-julia> GeometricObjects.isonline(@Vec[1.0, 1.0], line)
+julia> within(@Vec[1.0, 1.0], line)
 true
 
-julia> GeometricObjects.isonline(@Vec[1.0, 0.0], line)
+julia> within(@Vec[1.0, 0.0], line)
 false
 ```
 """
-function isonline(x::Vec, line::Line)
+function within(x::Vec, line::Line)
     d, scale = _distance(line, x)
     0 ≤ scale ≤ 1 && (d ⋅ d) < eps(eltype(d))
 end
 # much faster for 2D
-function isonline(X::Vec{2}, line::Line{2})
+function within(X::Vec{2}, line::Line{2})
     @inbounds begin
         x, y = X[1], X[2]
         a, b = line

@@ -9,16 +9,16 @@ export
     GeometricObject,
     coordinates,
     centroid,
+    within,
+    distance,
     moment_of_inertia,
 # Line
     Line,
     perpendicularfoot,
-    distance,
     normalunit,
 # Polygon
     Polygon,
     Rectangle,
-    within,
 # Sphere/Disk
     Sphere,
     Disk,
