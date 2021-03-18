@@ -106,7 +106,7 @@ function moment_of_inertia(x::Circle{2})
                           0 0 r^2/2]), :U)
 end
 
-to_sphere(disk::Circle) = Sphere(coordinates(disk), radius(disk))
-Base.in(disk::Circle, x::Vec{2}; include_bounds::Bool = true) = in(to_sphere(disk), x; include_bounds)
-distance(disk::Circle, x::Vec{2}) = distance(to_sphere(disk), x)
-distance(disk::Circle, x::Vec{2}, r::Real) = distance(to_sphere(disk), x, r)
+Sphere(circle::Circle) = Sphere(coordinates(circle), radius(circle))
+Base.in(circle::Circle, x::Vec{2}; include_bounds::Bool = true) = in(Sphere(circle), x; include_bounds)
+distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
+distance(circle::Circle, x::Vec{2}, r::Real) = distance(Sphere(circle), x, r)
