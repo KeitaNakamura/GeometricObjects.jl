@@ -4,6 +4,7 @@ authors = ["Keita Nakamura <keita.nakamura.1109@gmail.com>"]
 version = "0.1.0"
 
 [deps]
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Tensorial = "98f94333-fa9f-48a9-ad80-1c66397b2b38"
 

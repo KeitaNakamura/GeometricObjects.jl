@@ -2,6 +2,7 @@ module GeometricObjects
 
 using Reexport
 @reexport using Tensorial
+using RecipesBase
 
 using Base: @_propagate_inbounds_meta
 
@@ -27,5 +28,6 @@ include("GeometricObject.jl")
 include("Line.jl")
 include("Polygon.jl")
 include("Sphere.jl")
+include("plots.jl")
 
 end # module
