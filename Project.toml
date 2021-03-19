@@ -9,4 +9,4 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Tensorial = "98f94333-fa9f-48a9-ad80-1c66397b2b38"
 
 [compat]
-Tensorial = "0.4.15"
+Tensorial = "0.4.16"

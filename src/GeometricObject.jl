@@ -63,7 +63,7 @@ function update_position!(obj::GeometricObject{dim}, dt::Real) where {dim}
     r = centered(obj)
 
     @inbounds for i in eachindex(obj)
-        obj[i] = xc + ToVec(Val(dim), (dq * r[i] / dq).vector)
+        obj[i] = xc + rotate(r[i], dq)
     end
     obj.q = dq * q
 
@@ -106,10 +106,12 @@ function translate!(obj::GeometricObject, u::Vec)
     obj
 end
 
-function rotate!(obj::GeometricObject, R::Mat)
+function rotate!(obj::GeometricObject, θ::Vec)
+    q = exp(Quaternion(θ/2))
     xc = centroid(obj)
     for i in eachindex(obj)
-        @inbounds obj[i] = rotate(obj[i] - xc, R) + xc
+        @inbounds obj[i] = xc + rotate(obj[i] - xc, q)
     end
+    obj.q = q * obj.q
     obj
 end
