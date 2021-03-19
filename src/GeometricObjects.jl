@@ -10,6 +10,8 @@ export
     centroid,
     distance,
     moment_of_inertia,
+    translate!,
+    rotate!,
 # Line
     Line,
 # Polygon

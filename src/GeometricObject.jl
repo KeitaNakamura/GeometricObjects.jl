@@ -93,8 +93,23 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
 
     # update two velocities first
     obj.v = v + F / m * dt
-    @inbounds obj.ω = Vec(0, 0, ω[3] + inv(I[3,3]) ⋅ τ[3] * dt)
+    @inbounds obj.ω = Vec(0, 0, ω[3] + inv(I[3,3]) * τ[3] * dt)
 
     update_position!(obj, dt)
+    obj
+end
+
+function translate!(obj::GeometricObject, u::Vec)
+    for i in eachindex(obj)
+        @inbounds obj[i] = obj[i] + u
+    end
+    obj
+end
+
+function rotate!(obj::GeometricObject, R::Mat)
+    xc = centroid(obj)
+    for i in eachindex(obj)
+        @inbounds obj[i] = rotate(obj[i] - xc, R) + xc
+    end
     obj
 end
