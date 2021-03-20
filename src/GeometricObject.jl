@@ -52,12 +52,14 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
                     0 0 inv(I[3,3])]), :U)
 end
 
-function update_position!(obj::GeometricObject{dim}, dt::Real) where {dim}
+function update_position!(obj::GeometricObject, dt::Real)
     # v and ω need to be updated in advance
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     xc = centroid(obj)
-    dq = exp(Quaternion(obj.ω*dt/2))
-    @. obj = (xc + obj.v * dt) + rotate(obj - xc, dq)
+    dx = obj.v * dt
+    dθ = obj.ω * dt
+    dq = exp(Quaternion(dθ/2))
+    @. obj = (xc + dx) + rotate(obj - xc, dq)
     obj.q = dq * obj.q
     obj
 end

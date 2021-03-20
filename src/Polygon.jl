@@ -35,7 +35,7 @@ end
 end
 
 # https://en.wikipedia.org/wiki/Centroid
-function centroid(poly::Polygon{dim, T}) where {dim, T}
+function centroid(poly::Polygon{2, T}) where {T}
     A = zero(T)
     x_c = zero(T)
     y_c = zero(T)
@@ -76,9 +76,9 @@ end
 @inline function getline(poly::Polygon, i::Int)
     @boundscheck checkbounds(poly, i)
     if i == length(poly)
-        Line(poly[i], poly[1])
+        @inbounds Line(poly[i], poly[1])
     else
-        Line(poly[i], poly[i+1])
+        @inbounds Line(poly[i], poly[i+1])
     end
 end
 
