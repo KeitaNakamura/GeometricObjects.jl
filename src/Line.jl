@@ -117,7 +117,7 @@ function normalunit(line::Line{2})
         v = line[2] - line[1]
         n = Vec(v[2], -v[1])
     end
-    n / norm(n)
+    normalize(n)
 end
 
 """
