@@ -23,7 +23,6 @@ export
     Circle,
     radius
 
-include("utils.jl")
 include("GeometricObject.jl")
 include("Line.jl")
 include("Polygon.jl")
