@@ -53,20 +53,12 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
 end
 
 function update_position!(obj::GeometricObject{dim}, dt::Real) where {dim}
-    ω = obj.ω
-    q = obj.q
-
     # v and ω need to be updated in advance
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
-    xc = centroid(obj) + obj.v * dt
-    dq = exp(Quaternion(ω*dt/2))
-    r = centered(obj)
-
-    @inbounds for i in eachindex(obj)
-        obj[i] = xc + rotate(r[i], dq)
-    end
-    obj.q = dq * q
-
+    xc = centroid(obj)
+    dq = exp(Quaternion(obj.ω*dt/2))
+    @. obj = (xc + obj.v * dt) + rotate(obj - xc, dq)
+    obj.q = dq * obj.q
     obj
 end
 
@@ -100,18 +92,14 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
 end
 
 function translate!(obj::GeometricObject, u::Vec)
-    for i in eachindex(obj)
-        @inbounds obj[i] = obj[i] + u
-    end
+    @. obj = obj + u
     obj
 end
 
 function rotate!(obj::GeometricObject, θ::Vec)
     q = exp(Quaternion(θ/2))
     xc = centroid(obj)
-    for i in eachindex(obj)
-        @inbounds obj[i] = xc + rotate(obj[i] - xc, q)
-    end
+    @. obj = xc + rotate(obj - xc, q)
     obj.q = q * obj.q
     obj
 end
