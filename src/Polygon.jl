@@ -105,7 +105,7 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::Real) where {T}
     norm_dist = T(Inf)
     isincontact = false
     for (i, line) in enumerate(eachline(poly))
-        d = distance(line, x, r)
+        d = distance_from_outside(line, x, r)
         if d !== nothing
             norm_d = norm(d)
             if norm_d < norm_dist

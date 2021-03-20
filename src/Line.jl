@@ -67,10 +67,12 @@ julia> distance(line, @Vec[1.0, 0.0])
  -0.5
   0.5
 
-julia> distance(line, @Vec[1.0, 0.0], 0.5) === nothing
-true
+julia> distance(line, @Vec[1.0, 0.0], 1.0)
+2-element Tensor{Tuple{2},Float64,1,2}:
+ -0.5
+  0.5
 
-julia> distance(line, @Vec[1.0, 1.5], 1.0) === nothing
+julia> distance(line, @Vec[1.0, 0.0], 0.5) === nothing
 true
 ```
 """
@@ -81,7 +83,6 @@ end
 function distance(line::Line, x::Vec, r::Real)
     r² = r^2
     d, scale = _distance(line, x)
-    d ⋅ normalunit(line) > 0 && return nothing # lineの内側は接触を検知しないようにする
     if 0 ≤ scale ≤ 1 # perpendicular foot is on line
         (d ⋅ d) ≤ r² && return d
     else
@@ -93,6 +94,13 @@ function distance(line::Line, x::Vec, r::Real)
         (x_to_b ⋅ x_to_b) ≤ r² && return x_to_b
     end
     nothing
+end
+
+function distance_from_outside(line::Line, x::Vec, r::Real)
+    d = distance(line, x, r)
+    d === nothing && return nothing
+    d ⋅ normalunit(line) > 0 && return nothing # lineの内側は接触を検知しないようにする
+    d
 end
 
 """
