@@ -2,6 +2,7 @@ module GeometricObjects
 
 using Reexport
 @reexport using Tensorial
+@reexport using WriteVTK
 using RecipesBase
 
 using Base: @_propagate_inbounds_meta
@@ -22,12 +23,15 @@ export
 # Sphere/Circle
     Sphere,
     Circle,
-    radius
+    radius,
+# VTK
+    vtk_grid
 
 include("GeometricObject.jl")
 include("Line.jl")
 include("Polygon.jl")
 include("Sphere.jl")
 include("plots.jl")
+include("vtk.jl")
 
 end # module
