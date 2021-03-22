@@ -11,6 +11,7 @@ export
     centroid,
     distance,
     moment_of_inertia,
+    velocityat,
     translate!,
     rotate!,
 # Line
