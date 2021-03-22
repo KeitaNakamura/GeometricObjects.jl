@@ -93,6 +93,16 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     obj
 end
 
+function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec}, dt::Real; body_force_per_unit_mass::Vec = zero(Vec{dim, T})) where {dim, T}
+    promote_shape(Fᵢ, xᵢ)
+    xc = centroid(obj)
+    update!(obj,
+            sum(Fᵢ) + obj.m * body_force_per_unit_mass,
+            sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ)),
+            dt)
+    obj
+end
+
 function translate!(obj::GeometricObject, u::Vec)
     @. obj = obj + u
     obj
