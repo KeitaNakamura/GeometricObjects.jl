@@ -115,3 +115,7 @@ function rotate!(obj::GeometricObject, θ::Vec)
     obj.q = q * obj.q
     obj
 end
+
+function Base.in(obj::GeometricObject, x::Vec)
+    throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
+end
