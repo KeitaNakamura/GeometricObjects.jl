@@ -93,13 +93,17 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     obj
 end
 
-function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec}, dt::Real; body_force_per_unit_mass::Vec = zero(Vec{dim, T})) where {dim, T}
+function compute_force_moment(obj::GeometricObject, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec})
     promote_shape(Fᵢ, xᵢ)
     xc = centroid(obj)
-    update!(obj,
-            sum(Fᵢ) + obj.m * body_force_per_unit_mass,
-            sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ)),
-            dt)
+    F = sum(Fᵢ)
+    M = sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ))
+    F, M
+end
+
+function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec}, dt::Real; body_force_per_unit_mass::Vec = zero(Vec{dim, T})) where {dim, T}
+    F, M = compute_force_moment(obj, Fᵢ, xᵢ)
+    update!(obj, F + obj.m*body_force_per_unit_mass, M, dt)
     obj
 end
 
