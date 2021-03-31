@@ -1,4 +1,5 @@
 @testset "Polygon" begin
+    # `in`
     poly = Polygon([Vec(0.1,0.1), Vec(0.3,0.1), Vec(0.4,0.0), Vec(0.5,0.1), Vec(0.7,0.1),
                     Vec(0.6,0.4), Vec(0.5,0.4), Vec(0.4,0.3), Vec(0.3,0.3), Vec(0.2,0.4)])
     # Vec(0.0,0.0)
@@ -49,4 +50,23 @@
     # Vec(0.6,0.4)
     @test in(Vec(0.6,0.4), poly; include_bounds = true)  == true
     @test in(Vec(0.6,0.4), poly; include_bounds = false) == false
+
+    # distance
+    poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (10,10), (0,10)])
+    @test distance(poly, Vec(5.0,-1.0), 2) ≈ [0,1]
+    @test distance(poly, Vec(11.0,-1.0), 2) ≈ [-1,1]
+    @test distance(poly, Vec(11.0,5.0), 2) ≈ [-1,0]
+    @test distance(poly, Vec(11.0,11.0), 2) ≈ [-1,-1]
+    @test distance(poly, Vec(5.0,11.0), 2) ≈ [0,-1]
+    @test distance(poly, Vec(-1.0,11.0), 2) ≈ [1,-1]
+    @test distance(poly, Vec(-1.0,5.0), 2) ≈ [1,0]
+    @test distance(poly, Vec(-1.0,-1.0), 2) ≈ [1,1]
+    # reverse version
+    poly = Polygon(Vec{2,Float64}[(0,0), (0,10), (10,10), (10,0)])
+    @test distance(poly, Vec(5.0,0.5), 1) ≈ [0,-0.5]
+    @test distance(poly, Vec(9.0,0.5), 1) ≈ [0,-0.5]
+    @test distance(poly, Vec(9.5,5.0), 1) ≈ [0.5,0]
+    @test distance(poly, Vec(9.5,9.0), 1) ≈ [0.5,0]
+    @test distance(poly, Vec(5.0,9.5), 1) ≈ [0,0.5]
+    @test distance(poly, Vec(1.0,9.5), 1) ≈ [0,0.5]
 end
