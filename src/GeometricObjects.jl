@@ -10,6 +10,7 @@ using Base: @_propagate_inbounds_meta
 export
     GeometricObject,
     centroid,
+    area,
     distance,
     moment_of_inertia,
     velocityat,

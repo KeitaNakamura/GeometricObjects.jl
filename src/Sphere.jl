@@ -98,6 +98,11 @@ Circle(centroid::Vec{dim}, r::Real) where {dim} = GeometricObject(Circle, [centr
 centroid(x::Circle) = @inbounds x[1]
 radius(x::Circle) = x.r
 
+function area(x::Circle{2})
+    r = radius(x)
+    π*r^2
+end
+
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html
 function moment_of_inertia(x::Circle{2})
     r = radius(x)

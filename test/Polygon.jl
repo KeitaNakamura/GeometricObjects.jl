@@ -69,4 +69,8 @@
     @test distance(poly, Vec(9.5,9.0), 1) ≈ [0.5,0]
     @test distance(poly, Vec(5.0,9.5), 1) ≈ [0,0.5]
     @test distance(poly, Vec(1.0,9.5), 1) ≈ [0,0.5]
+
+    # area
+    poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (8,5), (3,5)])
+    @test area(poly) ≈ (10 + 5) * 5 / 2
 end

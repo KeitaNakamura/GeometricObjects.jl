@@ -55,6 +55,22 @@ function centroid(poly::Polygon{2, T}) where {T}
     Vec(x_c/6A, y_c/6A)
 end
 
+function area(poly::Polygon{2, T}) where {T}
+    A = zero(T)
+    for i in 1:length(poly)
+        @inbounds begin
+            Xᵢ = poly[i]
+            Xᵢ₊₁ = poly[i+1]
+            xᵢ, yᵢ = Xᵢ[1], Xᵢ[2]
+            xᵢ₊₁, yᵢ₊₁ = Xᵢ₊₁[1], Xᵢ₊₁[2]
+        end
+        a = (xᵢ * yᵢ₊₁ - xᵢ₊₁ * yᵢ)
+        A += a
+    end
+    A /= 2
+    A
+end
+
 # https://en.wikipedia.org/wiki/List_of_moments_of_inertia
 function moment_of_inertia(poly::Polygon{2, T}) where {T}
     num = zero(T)
