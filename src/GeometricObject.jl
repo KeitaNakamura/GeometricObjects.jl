@@ -123,3 +123,11 @@ end
 function Base.in(obj::GeometricObject, x::Vec)
     throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
 end
+
+@generated function enlarge(obj::GeometricObject, R::Real)
+    exps = [name == :coordinates ? :coordinates : :(obj.$name) for name in fieldnames(obj)]
+    quote
+        coordinates = centroid(obj) .+ R * centered(obj)
+        $obj($(exps...))
+    end
+end

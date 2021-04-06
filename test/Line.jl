@@ -49,4 +49,8 @@
     @test distance(line, Vec(0.6,0.2), r) ≈ b - [0.6,0.2]
     @test GeometricObjects.distance_from_outside(line, Vec(0.6,0.2), r) ≈ [0.5,0.4] - [0.6,0.2]
     @test GeometricObjects.perpendicularfoot(line, Vec(0.6,0.2)) ≈ [0.6,0.4]
+
+    # enlarge
+    line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
+    @test (@inferred enlarge(line, 1.1))::Line ≈ [[-0.05, 0.0], [1.05, 0.0]]
 end

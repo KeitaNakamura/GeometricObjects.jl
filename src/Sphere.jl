@@ -83,6 +83,10 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
     nothing
 end
 
+function enlarge(sphere::Sphere, R::Real)
+    Sphere(copy(coordinates(sphere)), R*radius(sphere), sphere.m, sphere.v, sphere.ω, sphere.q)
+end
+
 
 mutable struct Circle{dim, T} <: GeometricObject{dim, T}
     coordinates::Vector{Vec{dim, T}}
@@ -115,3 +119,7 @@ Sphere(circle::Circle) = Sphere(centroid(circle), radius(circle))
 Base.in(x::Vec{2}, circle::Circle; include_bounds::Bool = true) = in(x, Sphere(circle); include_bounds)
 distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
 distance(circle::Circle, x::Vec{2}, r::Real) = distance(Sphere(circle), x, r)
+
+function enlarge(circle::Circle, R::Real)
+    Circle(copy(coordinates(circle)), R*radius(circle), circle.m, circle.v, circle.ω, circle.q)
+end
