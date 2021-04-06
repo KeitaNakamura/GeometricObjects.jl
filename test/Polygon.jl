@@ -73,4 +73,8 @@
     # area
     poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (8,5), (3,5)])
     @test area(poly) ≈ (10 + 5) * 5 / 2
+
+    # enlarge
+    poly = Polygon(Vec{2,Float64}[(0,0), (1,0), (1,1), (0,1)])
+    @test (@inferred enlarge(poly, 1.1))::Polygon ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
 end

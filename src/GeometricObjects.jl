@@ -16,6 +16,7 @@ export
     velocityat,
     translate!,
     rotate!,
+    enlarge,
 # Line
     Line,
 # Polygon
