@@ -131,3 +131,11 @@ end
         $obj($(exps...))
     end
 end
+
+@generated function Base.reverse(obj::GeometricObject)
+    exps = [name == :coordinates ? :coordinates : :(obj.$name) for name in fieldnames(obj)]
+    quote
+        coordinates = reverse(obj.coordinates)
+        $obj($(exps...))
+    end
+end
