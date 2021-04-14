@@ -77,11 +77,19 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}) where {dim}
 end
 
 function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
-    v = centroid(sphere) - x
-    norm_v = norm(v)
-    d = norm_v - radius(sphere)
-    d - r ≤ 0 && return d * (v / norm_v)
-    nothing
+    if sphere.reverse
+        v = x - centroid(sphere)
+        norm_v = norm(v)
+        d = radius(sphere) - norm_v
+        d - r ≤ 0 && return d * (v / norm_v)
+        nothing
+    else
+        v = centroid(sphere) - x
+        norm_v = norm(v)
+        d = norm_v - radius(sphere)
+        d - r ≤ 0 && return d * (v / norm_v)
+        nothing
+    end
 end
 
 function enlarge(sphere::Sphere, R::Real)
