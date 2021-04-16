@@ -1,5 +1,5 @@
-mutable struct Polygon{dim, T} <: Shape{dim, T}
-    coordinates::Vector{Vec{dim, T}}
+mutable struct Polygon{dim, T, V <: AbstractVector{Vec{dim, T}}} <: Shape{dim, T}
+    coordinates::V
     q::Quaternion{T}
 end
 
@@ -13,12 +13,17 @@ function Polygon(coordinates::Vector{<: Vec{2}}; x = nothing, y = nothing, z = n
     Shape(Polygon, coords)
 end
 
+function Polygon(coordinates::Vec{2}...; x = nothing, y = nothing, z = nothing)
+    coords = _projection.(coordinates, x, y, z)
+    Shape(Polygon, MVector(coords))
+end
+
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}
     x0 = bottomleft[1]
     y0 = bottomleft[2]
     x1 = topright[1]
     y1 = topright[2]
-    Polygon([Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1)]; x, y, z)
+    Polygon(@MVector[Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1)]; x, y, z)
 end
 
 # handle end+1 index
