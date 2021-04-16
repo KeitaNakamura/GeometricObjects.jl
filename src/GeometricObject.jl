@@ -14,7 +14,7 @@ end
 
 coordinates(x::GeometricObject) = coordinates(x.shape)
 
-for f in (:centroid, :centered, :area, :translate!, :rotate!) # call the same function of `Shape`
+for f in (:centroid, :centered, :area, :translate!, :rotate!, :distance) # call the same function of `Shape`
     @eval $f(x::GeometricObject, args...; kwargs...) = $f(x.shape, args...; kwargs...)
 end
 
