@@ -1,16 +1,22 @@
-abstract type GeometricObject{dim, T} <: AbstractVector{Vec{dim, T}} end
+mutable struct GeometricObject{dim, T, S <: Shape{dim, T}} <: AbstractVector{Vec{dim, T}}
+    shape::S
+    m::T
+    v::Vec{dim, T}
+    ω::Vec{3, T}
+end
 
-function GeometricObject(::Type{Obj}, coordinates::AbstractVector{<: Vec{dim, T}}, args...) where {Obj <: GeometricObject, dim, T}
+function GeometricObject(shape::Shape{dim, T}) where {dim, T}
     m = one(T)
     v = zero(Vec{dim, T})
     ω = zero(Vec{3, T})
-    q = quaternion(T, 0, Vec(0,0,1))
-    Obj(coordinates, args..., m, v, ω, q)
+    GeometricObject(shape, m, v, ω)
 end
 
-coordinates(x::GeometricObject) = x.coordinates
+coordinates(x::GeometricObject) = coordinates(x.shape)
 
-centered(x::GeometricObject) = x .- centroid(x)
+for f in (:centroid, :centered, :area) # call the same function of `Shape`
+    @eval $f(x::GeometricObject) = $f(x.shape)
+end
 
 Base.size(x::GeometricObject) = size(coordinates(x))
 
@@ -25,7 +31,7 @@ end
     x
 end
 
-moment_of_inertia(x::GeometricObject) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
+moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(x.shape)
 
 function velocityat(obj::GeometricObject{3}, x::Vec{3})
     r = x - centroid(obj)
@@ -52,15 +58,12 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
                     0 0 inv(I[3,3])]), :U)
 end
 
-function update_position!(obj::GeometricObject, dt::Real)
+function update!(obj::GeometricObject, dt::Real)
     # v and ω need to be updated in advance
-    # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
-    xc = centroid(obj)
     dx = obj.v * dt
     dθ = obj.ω * dt
-    dq = exp(Quaternion(dθ/2))
-    @. obj = (xc + dx) + rotate(obj - xc, dq)
-    obj.q = dq * obj.q
+    translate!(obj.shape, dx)
+    rotate!(obj.shape, dθ)
     obj
 end
 
@@ -75,7 +78,7 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     obj.v = v + F / m * dt
     obj.ω = ω + I⁻¹ ⋅ (τ - ω × (I ⋅ ω)) * dt
 
-    update_position!(obj, dt)
+    update!(obj, dt)
     obj
 end
 
@@ -89,7 +92,7 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     obj.v = v + F / m * dt
     @inbounds obj.ω = Vec(0, 0, ω[3] + inv(I[3,3]) * τ[3] * dt)
 
-    update_position!(obj, dt)
+    update!(obj, dt)
     obj
 end
 
@@ -107,35 +110,6 @@ function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ
     obj
 end
 
-function translate!(obj::GeometricObject, u::Vec)
-    @. obj = obj + u
-    obj
-end
-
-function rotate!(obj::GeometricObject, θ::Vec)
-    q = exp(Quaternion(θ/2))
-    xc = centroid(obj)
-    @. obj = xc + rotate(obj - xc, q)
-    obj.q = q * obj.q
-    obj
-end
-
 function Base.in(obj::GeometricObject, x::Vec)
     throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
-end
-
-@generated function enlarge(obj::GeometricObject, R::Real)
-    exps = [name == :coordinates ? :coordinates : :(obj.$name) for name in fieldnames(obj)]
-    quote
-        coordinates = centroid(obj) .+ R * centered(obj)
-        $obj($(exps...))
-    end
-end
-
-@generated function Base.reverse(obj::GeometricObject)
-    exps = [name == :coordinates ? :coordinates : :(obj.$name) for name in fieldnames(obj)]
-    quote
-        coordinates = reverse(obj.coordinates)
-        $obj($(exps...))
-    end
 end

@@ -1,14 +1,11 @@
-mutable struct Sphere{dim, T} <: GeometricObject{dim, T}
+mutable struct Sphere{dim, T} <: Shape{dim, T}
     coordinates::Vector{Vec{dim, T}}
     r::T
     reverse::Bool
-    m::T
-    v::Vec{dim, T}
-    ω::Vec{3, T}
     q::Quaternion{T}
 end
 
-Sphere(centroid::Vec, r::Real) = GeometricObject(Sphere, [centroid], r, false)
+Sphere(centroid::Vec, r::Real) = Shape(Sphere, [centroid], r, false)
 
 centroid(x::Sphere) = @inbounds x[1]
 radius(x::Sphere) = x.r
@@ -16,9 +13,9 @@ radius(x::Sphere) = x.r
 function moment_of_inertia(x::Sphere)
     r = radius(x)
     I = 2r^2 / 5
-    x.m * symmetric(@Mat([I 0 0
-                          0 I 0
-                          0 0 I]), :U)
+    symmetric(@Mat([I 0 0
+                    0 I 0
+                    0 0 I]), :U)
 end
 
 """
@@ -93,25 +90,22 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
 end
 
 function enlarge(sphere::Sphere, R::Real)
-    Sphere(copy(coordinates(sphere)), R*radius(sphere), sphere.reverse, sphere.m, sphere.v, sphere.ω, sphere.q)
+    Sphere(copy(coordinates(sphere)), R*radius(sphere), sphere.reverse, sphere.q)
 end
 
 function Base.reverse(sphere::Sphere)
-    Sphere(copy(coordinates(sphere)), radius(sphere), !sphere.reverse, sphere.m, sphere.v, sphere.ω, sphere.q)
+    Sphere(copy(coordinates(sphere)), radius(sphere), !sphere.reverse, sphere.q)
 end
 
 
-mutable struct Circle{dim, T} <: GeometricObject{dim, T}
+mutable struct Circle{dim, T} <: Shape{dim, T}
     coordinates::Vector{Vec{dim, T}}
     r::T
     reverse::Bool
-    m::T
-    v::Vec{dim, T}
-    ω::Vec{3, T}
     q::Quaternion{T}
 end
 
-Circle(centroid::Vec{dim}, r::Real) where {dim} = GeometricObject(Circle, [centroid], r, false)
+Circle(centroid::Vec{dim}, r::Real) where {dim} = Shape(Circle, [centroid], r, false)
 
 centroid(x::Circle) = @inbounds x[1]
 radius(x::Circle) = x.r
@@ -124,20 +118,20 @@ end
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html
 function moment_of_inertia(x::Circle{2})
     r = radius(x)
-    x.m * symmetric(@Mat([0 0 0
-                          0 0 0
-                          0 0 r^2/2]), :U)
+    symmetric(@Mat([0 0 0
+                    0 0 0
+                    0 0 r^2/2]), :U)
 end
 
-Sphere(circle::Circle) = Sphere(coordinates(circle), radius(circle), circle.reverse, circle.m, circle.v, circle.ω, circle.q)
+Sphere(circle::Circle) = Sphere(coordinates(circle), radius(circle), circle.reverse, circle.q)
 Base.in(x::Vec{2}, circle::Circle; include_bounds::Bool = true) = in(x, Sphere(circle); include_bounds)
 distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
 distance(circle::Circle, x::Vec{2}, r::Real) = distance(Sphere(circle), x, r)
 
 function enlarge(circle::Circle, R::Real)
-    Circle(copy(coordinates(circle)), R*radius(circle), circle.reverse, circle.m, circle.v, circle.ω, circle.q)
+    Circle(copy(coordinates(circle)), R*radius(circle), circle.reverse, circle.q)
 end
 
 function Base.reverse(circle::Circle)
-    Circle(copy(coordinates(circle)), radius(circle), !circle.reverse, circle.m, circle.v, circle.ω, circle.q)
+    Circle(copy(coordinates(circle)), radius(circle), !circle.reverse, circle.q)
 end

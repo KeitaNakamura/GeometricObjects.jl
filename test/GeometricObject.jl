@@ -2,7 +2,7 @@
     # check common methods for GeometricObject
     @testset "Line" begin
         ## 2D
-        line = Line(Vec(0.3,0.4) => Vec(0.5,0.4))
+        line = GeometricObject(Line(Vec(0.3,0.4) => Vec(0.5,0.4)))
         v = line[2] - line[1]
         l² = v ⋅ v
         I = l² / 12 * line.m
@@ -11,7 +11,7 @@
         @test norm(line[2] - line[1]) ≈ norm(v)
         @test (x = line[2] - line[1]; atan(x[2]/x[1])) ≈ 1
         ## 3D
-        line = Line(Vec(0.0, 0.0, 0.0) => Vec(1.0, 0.0, 0.0))
+        line = GeometricObject(Line(Vec(0.0, 0.0, 0.0) => Vec(1.0, 0.0, 0.0)))
         v = line[2] - line[1]
         l² = v ⋅ v
         I = l² / 12 * line.m
@@ -19,21 +19,5 @@
         @test centroid(line) == [1.0, 0.5, 0.5]
         @test norm(line[2] - line[1]) ≈ norm(v)
         @test (x = line[2] - line[1]; atan(x[2]/x[1])) ≈ 1
-    end
-    @testset "Polygon" begin
-        poly = Polygon([Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0)])
-        rotate!(poly, Vec(0.0,0.0,1.0) * π/4)
-        @test centroid(poly) ≈ [0.5,0.5]
-        @test poly ≈ [[0.5, 0.5-1/√2], [0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5]]
-        rotate!(poly, Vec(0.0,0.0,1.0) * π/2)
-        @test centroid(poly) ≈ [0.5,0.5]
-        @test poly ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
-        xc = centroid(poly)
-        for i in eachindex(poly)
-            poly[i] = xc + rotate(poly[i] - xc, inv(poly.q))
-        end
-        @test poly ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]]
-        translate!(poly, Vec(0.4, 0.3))
-        @test poly ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]] .+ Vec(0.4, 0.3)
     end
 end

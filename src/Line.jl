@@ -2,15 +2,12 @@
     Line(a::Vec, b::Vec)
     Line(a::Vec => b::Vec)
 """
-mutable struct Line{dim, T} <: GeometricObject{dim, T}
+mutable struct Line{dim, T} <: Shape{dim, T}
     coordinates::Vector{Vec{dim, T}}
-    m::T
-    v::Vec{dim, T}
-    ω::Vec{3, T}
     q::Quaternion{T}
 end
 
-Line(a::Vec, b::Vec) = GeometricObject(Line, [a, b])
+Line(a::Vec, b::Vec) = Shape(Line, [a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
 centroid(line::Line) = sum(line) / 2
@@ -19,18 +16,18 @@ function moment_of_inertia(line::Line{2})
     a, b = line
     v = b - a
     l² = v ⋅ v
-    line.m * symmetric(@Mat([0 0 0
-                             0 0 0
-                             0 0 l²/12]), :U)
+    symmetric(@Mat([0 0 0
+                    0 0 0
+                    0 0 l²/12]), :U)
 end
 
 function moment_of_inertia(line::Line{3, T}) where {T}
     a, b = line
     v = b - a
     l² = v ⋅ v
-    I = line.m * symmetric(@Mat([l²/12 0     0
-                                 0     l²/12 0
-                                 0     0     0]), :U)
+    I = symmetric(@Mat([l²/12 0     0
+                        0     l²/12 0
+                        0     0     0]), :U)
     zaxis = Vec{3, T}(0,0,1)
     R = rotmat(zaxis => v/sqrt(l²))
     rotate(I, R)

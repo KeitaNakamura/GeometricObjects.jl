@@ -8,12 +8,12 @@ using RecipesBase
 using Base: @_propagate_inbounds_meta
 
 export
-    GeometricObject,
+# Shape
+    Shape,
     centroid,
     area,
     distance,
     moment_of_inertia,
-    velocityat,
     translate!,
     rotate!,
     enlarge,
@@ -26,13 +26,17 @@ export
     Sphere,
     Circle,
     radius,
+# GeometricObject,
+    GeometricObject,
+    velocityat,
 # VTK
     vtk_grid
 
-include("GeometricObject.jl")
+include("Shape.jl")
 include("Line.jl")
 include("Polygon.jl")
 include("Sphere.jl")
+include("GeometricObject.jl")
 include("plots.jl")
 include("vtk.jl")
 

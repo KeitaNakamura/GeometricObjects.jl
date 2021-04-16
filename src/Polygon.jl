@@ -1,8 +1,5 @@
-mutable struct Polygon{dim, T} <: GeometricObject{dim, T}
+mutable struct Polygon{dim, T} <: Shape{dim, T}
     coordinates::Vector{Vec{dim, T}}
-    m::T
-    v::Vec{dim, T}
-    ω::Vec{3, T}
     q::Quaternion{T}
 end
 
@@ -13,7 +10,7 @@ _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,
 
 function Polygon(coordinates::Vector{<: Vec{2}}; x = nothing, y = nothing, z = nothing)
     coords = _projection.(coordinates, x, y, z)
-    GeometricObject(Polygon, coords)
+    Shape(Polygon, coords)
 end
 
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}
@@ -84,9 +81,9 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
         num += a * ((xᵢ ⋅ xᵢ) + (xᵢ ⋅ xᵢ₊₁) + (xᵢ₊₁ ⋅ xᵢ₊₁))
         den += a
     end
-    poly.m * symmetric(@Mat([0 0 0
-                             0 0 0
-                             0 0 num/den]), :U)
+    symmetric(@Mat([0 0 0
+                    0 0 0
+                    0 0 num/den]), :U)
 end
 
 @inline function getline(poly::Polygon, i::Int)
