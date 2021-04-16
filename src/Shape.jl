@@ -6,7 +6,7 @@ function Shape(::Type{S}, coordinates::AbstractVector{<: Vec{dim, T}}, args...) 
 end
 
 coordinates(x::Shape) = x.coordinates
-centered(x::Shape) = x .- centroid(x)
+centered(x::Shape) = coordinates(x) .- centroid(x) # call coordinates to keep type of coordinates in broadcast, otherwise always return `Vector`
 
 Base.size(x::Shape) = size(coordinates(x))
 

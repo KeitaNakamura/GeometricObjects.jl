@@ -1,11 +1,11 @@
 mutable struct Sphere{dim, T} <: Shape{dim, T}
-    coordinates::Vector{Vec{dim, T}}
+    coordinates::MVector{1, Vec{dim, T}}
     r::T
     reverse::Bool
     q::Quaternion{T}
 end
 
-Sphere(centroid::Vec, r::Real) = Shape(Sphere, [centroid], r, false)
+Sphere(centroid::Vec, r::Real) = Shape(Sphere, @MVector[centroid], r, false)
 
 centroid(x::Sphere) = @inbounds x[1]
 radius(x::Sphere) = x.r
@@ -99,13 +99,13 @@ end
 
 
 mutable struct Circle{dim, T} <: Shape{dim, T}
-    coordinates::Vector{Vec{dim, T}}
+    coordinates::MVector{1, Vec{dim, T}}
     r::T
     reverse::Bool
     q::Quaternion{T}
 end
 
-Circle(centroid::Vec{dim}, r::Real) where {dim} = Shape(Circle, [centroid], r, false)
+Circle(centroid::Vec{dim}, r::Real) where {dim} = Shape(Circle, @MVector[centroid], r, false)
 
 centroid(x::Circle) = @inbounds x[1]
 radius(x::Circle) = x.r

@@ -3,11 +3,11 @@
     Line(a::Vec => b::Vec)
 """
 mutable struct Line{dim, T} <: Shape{dim, T}
-    coordinates::Vector{Vec{dim, T}}
+    coordinates::MVector{2, Vec{dim, T}}
     q::Quaternion{T}
 end
 
-Line(a::Vec, b::Vec) = Shape(Line, [a, b])
+Line(a::Vec, b::Vec) = Shape(Line, @MVector[a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
 centroid(line::Line) = sum(line) / 2

@@ -3,6 +3,7 @@ module GeometricObjects
 using Reexport
 @reexport using Tensorial
 @reexport using WriteVTK
+using StaticArrays
 using RecipesBase
 
 using Base: @_propagate_inbounds_meta
