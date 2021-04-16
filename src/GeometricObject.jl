@@ -110,6 +110,7 @@ function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ
     obj
 end
 
+Base.in(x::Vec, obj::GeometricObject) = x in obj.shape
 function Base.in(obj::GeometricObject, x::Vec)
     throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
 end
