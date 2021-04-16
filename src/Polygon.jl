@@ -118,19 +118,20 @@ function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     isodd(I)
 end
 
-function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::Real) where {T}
-    dist = nothing
-    norm_dist = T(Inf)
+function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
+    for xᵢ in poly
+        xᵢ in SCircle(x, r) && return xᵢ - x
+    end
+
+    dist = zero(Vec{2, T})
     isincontact = false
-    for (i, line) in enumerate(eachline(poly))
-        d = distance_from_outside(line, x, r)
+    for line in eachline(poly)
+        d = distance(line, x, r)
         if d !== nothing
-            norm_d = norm(d)
-            if norm_d < norm_dist
-                dist = d
-                norm_dist = norm_d
-            end
+            dist += d
+            isincontact = true
         end
     end
-    dist
+
+    isincontact ? dist : nothing
 end
