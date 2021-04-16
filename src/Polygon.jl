@@ -94,9 +94,9 @@ end
 @inline function getline(poly::Polygon, i::Int)
     @boundscheck checkbounds(poly, i)
     if i == length(poly)
-        @inbounds Line(poly[i], poly[1])
+        @inbounds SLine(poly[i], poly[1])
     else
-        @inbounds Line(poly[i], poly[i+1])
+        @inbounds SLine(poly[i], poly[i+1])
     end
 end
 
