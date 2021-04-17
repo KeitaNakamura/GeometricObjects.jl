@@ -72,22 +72,8 @@ function distance(line::AbstractLine, x::Vec, r::Real)
     d, scale = _distance(line, x)
     if 0 ≤ scale ≤ 1 # perpendicular foot is on line
         (d ⋅ d) ≤ r² && return d
-    else
-        @inbounds begin
-            x_to_a = line[1] - x
-            x_to_b = line[2] - x
-        end
-        (x_to_a ⋅ x_to_a) ≤ r² && return x_to_a
-        (x_to_b ⋅ x_to_b) ≤ r² && return x_to_b
     end
     nothing
-end
-
-function distance_from_outside(line::AbstractLine, x::Vec, r::Real)
-    d = distance(line, x, r)
-    d === nothing && return nothing
-    d ⋅ normalunit(line) > 0 && return nothing # lineの内側は接触を検知しないようにする
-    d
 end
 
 """

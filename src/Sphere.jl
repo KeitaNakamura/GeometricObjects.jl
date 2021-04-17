@@ -79,11 +79,10 @@ false
 """
 function Base.in(x::Vec{dim}, sphere::AbstractSphere{dim}; include_bounds::Bool = true) where {dim}
     c = centroid(sphere)
-    d = (x - c)
+    d = x - c
     d² = d ⋅ d
     r² = radius(sphere)^2
-    d² == r² && return include_bounds
-    d² < r²
+    d² == r² ? include_bounds : d² < r²
 end
 
 """
