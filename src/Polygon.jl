@@ -8,7 +8,7 @@ _projection(v::Vec{2}, x::Real, ::Nothing, ::Nothing) = Vec(x, v[1], v[2]) # (y,
 _projection(v::Vec{2}, ::Nothing, y::Real, ::Nothing) = Vec(v[2], y, v[1]) # (z,x)
 _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,y)
 
-function Polygon(coordinates::Vector{<: Vec{2}}; x = nothing, y = nothing, z = nothing)
+function Polygon(coordinates::AbstractVector{<: Vec{2}}; x = nothing, y = nothing, z = nothing)
     coords = _projection.(coordinates, x, y, z)
     Shape(Polygon, coords)
 end
