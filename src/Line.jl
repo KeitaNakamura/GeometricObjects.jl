@@ -156,6 +156,8 @@ end
 
 coordinates(line::SLine) = SVector(line.a, line.b)
 
+Base.reverse(line::SLine) = SLine(line.b, line.a)
+
 function Base.getindex(line::SLine, i::Int)
     @boundscheck checkbounds(line, i)
     i == 1 && return line.a
