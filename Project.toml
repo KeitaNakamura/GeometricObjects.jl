@@ -1,7 +1,7 @@
 name = "GeometricObjects"
 uuid = "f167b195-1c3d-409a-8dd6-02cc02a656c6"
 authors = ["Keita Nakamura <keita.nakamura.1109@gmail.com>"]
-version = "0.2.2"
+version = "0.3.0"
 
 [deps]
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
