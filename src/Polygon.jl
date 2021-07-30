@@ -119,10 +119,6 @@ function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
 end
 
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
-    for xᵢ in poly
-        xᵢ in SCircle(x, r) && return xᵢ - x
-    end
-
     dist = zero(Vec{2, T})
     isincontact = false
     for line in eachline(poly)
@@ -132,6 +128,10 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
             isincontact = true
         end
     end
+    isincontact && return dist
 
-    isincontact ? dist : nothing
+    for xᵢ in poly
+        xᵢ in SCircle(x, r) && return xᵢ - x
+    end
+    nothing
 end
