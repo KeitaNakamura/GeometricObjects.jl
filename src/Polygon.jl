@@ -120,15 +120,15 @@ end
 
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     dist = zero(Vec{2, T})
-    isincontact = false
+    count = 0
     for line in eachline(poly)
         d = distance(line, x, r)
         if d !== nothing
             dist += d
-            isincontact = true
+            count += 1
         end
     end
-    isincontact && return dist
+    count != 0 && return dist / count
 
     for xᵢ in poly
         xᵢ in SCircle(x, r) && return xᵢ - x
