@@ -122,7 +122,8 @@ end
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     dist = zero(Vec{2, T})
     count = 0
-    for line in eachline(poly)
+    @inbounds for i in eachindex(poly)
+        line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
             dist += d

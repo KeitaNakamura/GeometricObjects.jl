@@ -23,7 +23,7 @@ function moment_of_inertia(line::AbstractLine{3, T}) where {T}
     rotate(I, R)
 end
 
-function _distance(line::AbstractLine, x::Vec)
+@inline function _distance(line::AbstractLine, x::Vec)
     @inbounds begin
         v = line[2] - line[1]
         a_to_x = x - line[1]
@@ -67,7 +67,7 @@ function distance(line::AbstractLine, x::Vec)
     _distance(line, x)[1]
 end
 
-function distance(line::AbstractLine, x::Vec, r::Real)
+@inline function distance(line::AbstractLine, x::Vec, r::Real)
     r² = r^2
     d, scale = _distance(line, x)
     if 0 ≤ scale ≤ 1 # perpendicular foot is on line
