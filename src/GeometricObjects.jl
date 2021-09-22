@@ -23,6 +23,8 @@ export
 # Polygon
     Polygon,
     Rectangle,
+# Polyline
+    Polyline,
 # Sphere/Circle
     Sphere,
     Circle,
@@ -36,6 +38,7 @@ export
 include("Shape.jl")
 include("Line.jl")
 include("Polygon.jl")
+include("Polyline.jl")
 include("Sphere.jl")
 include("GeometricObject.jl")
 include("plots.jl")
