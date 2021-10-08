@@ -46,4 +46,16 @@
     # enlarge
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
     @test (@inferred enlarge(line, 1.1))::Line ≈ [[-0.05, 0.0], [1.05, 0.0]]
+
+    # intersect
+    ## 2D
+    line1 = Line(Vec(0.0,0.0), Vec(0.2,0.2));
+    line2 = Line(Vec(0.0,1.0), Vec(1.0,0.0));
+    @test intersect(line1, line2, extended = true) ≈ [0.5,0.5]
+    @test intersect(line1, line2, extended = false) === nothing
+    ## 3D
+    line1 = Line(Vec(0.0,0.0,0.0), Vec(0.2,0.2,0.2));
+    line2 = Line(Vec(0.0,1.0,0.0), Vec(1.0,0.0,1.0));
+    @test intersect(line1, line2, extended = true) ≈ [0.5,0.5,0.5]
+    @test intersect(line1, line2, extended = false) === nothing
 end

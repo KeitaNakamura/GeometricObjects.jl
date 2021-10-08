@@ -137,3 +137,26 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     end
     nothing
 end
+
+"""
+    intersect(::Polygon, ::AbstractLine; [extended = false])
+
+Find the closest intersection point from line to polygon.
+Return `nothing` if not found.
+"""
+function Base.intersect(poly::Polygon{dim, T}, line::AbstractLine; extended::Bool = false) where {dim, T}
+    output = zero(Vec{dim, T})
+    dist = T(Inf)
+    @inbounds for i in eachindex(poly)
+        p = intersect(getline(poly, i), line; extended)
+        p === nothing && continue
+        v = line[1] - p
+        vv = v ⋅ v
+        if vv < dist
+            output = p
+            dist = vv
+        end
+    end
+    isinf(dist) && return nothing
+    output
+end
