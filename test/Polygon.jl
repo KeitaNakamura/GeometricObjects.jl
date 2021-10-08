@@ -93,4 +93,10 @@
     # enlarge
     poly = Polygon(Vec{2,Float64}[(0,0), (1,0), (1,1), (0,1)])
     @test (@inferred enlarge(poly, 1.1))::Polygon ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
+
+    # intersect
+    poly = Polygon([Vec(0.0,1.0), Vec(1.0,0.0), Vec(1.0,1.0)])
+    line = Line(Vec(0.0,0.0), Vec(0.2,0.2));
+    @test intersect(poly, line, extended = true) ≈ [0.5,0.5]
+    @test intersect(poly, line, extended = false) === nothing
 end
