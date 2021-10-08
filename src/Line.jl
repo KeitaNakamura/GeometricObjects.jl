@@ -45,17 +45,17 @@ contact detection is performed using distance between `x` and vertices of line.
 
 ```jldoctest
 julia> line = Line(@Vec[0.0, 0.0] => @Vec[1.0, 1.0])
-2-element Line{2,Float64}:
+2-element Line{2, Float64}:
  [0.0, 0.0]
  [1.0, 1.0]
 
 julia> distance(line, @Vec[1.0, 0.0])
-2-element Tensor{Tuple{2},Float64,1,2}:
+2-element Vec{2, Float64}:
  -0.5
   0.5
 
 julia> distance(line, @Vec[1.0, 0.0], 1.0)
-2-element Tensor{Tuple{2},Float64,1,2}:
+2-element Vec{2, Float64}:
  -0.5
   0.5
 
@@ -101,7 +101,7 @@ Check if `x` is `in` line.
 # Examples
 ```jldoctest
 julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
-2-element Line{2,Float64}:
+2-element Line{2, Float64}:
  [0.0, 0.0]
  [2.0, 2.0]
 
