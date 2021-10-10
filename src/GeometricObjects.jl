@@ -11,6 +11,7 @@ using Base: @_propagate_inbounds_meta
 export
 # Shape
     Shape,
+    coordinates,
     centroid,
     area,
     distance,

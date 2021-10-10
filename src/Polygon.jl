@@ -101,7 +101,7 @@ end
 end
 
 function Base.eachline(poly::Polygon)
-    (@inbounds(getline(poly, i)) for i in eachindex(poly))
+    (@inbounds(getline(poly, i)) for i in 1:length(poly))
 end
 
 """
@@ -111,7 +111,7 @@ Check if `x` is `in` a polygon.
 """
 function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
-    @inbounds @simd for i in eachindex(poly)
+    @inbounds @simd for i in 1:length(poly)
         line = getline(poly, i)
         x in line && return include_bounds
         I += ray_casting_to_right(line, x)
@@ -122,7 +122,7 @@ end
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     dist = zero(Vec{2, T})
     count = 0
-    @inbounds for i in eachindex(poly)
+    @inbounds for i in 1:length(poly)
         line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
@@ -132,7 +132,7 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     end
     count != 0 && return dist / count
 
-    for xᵢ in poly
+    for xᵢ in coordinates(poly)
         xᵢ in SCircle(x, r) && return xᵢ - x
     end
     nothing
@@ -147,7 +147,7 @@ Return `nothing` if not found.
 function Base.intersect(poly::Polygon{dim, T}, line::AbstractLine; extended::Bool = false) where {dim, T}
     output = zero(Vec{dim, T})
     dist = T(Inf)
-    @inbounds for i in eachindex(poly)
+    @inbounds for i in 1:length(poly)
         p = intersect(getline(poly, i), line; extended)
         p === nothing && continue
         v = line[1] - p

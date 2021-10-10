@@ -1,4 +1,4 @@
-mutable struct GeometricObject{dim, T, S <: Shape{dim, T}} <: AbstractVector{Vec{dim, T}}
+mutable struct GeometricObject{dim, T, S <: Shape{dim, T}}
     shape::S
     m::T
     v::Vec{dim, T}
@@ -18,7 +18,8 @@ for f in (:centroid, :centered, :area, :translate!, :rotate!, :distance) # call 
     @eval $f(x::GeometricObject, args...; kwargs...) = $f(x.shape, args...; kwargs...)
 end
 
-Base.size(x::GeometricObject) = size(coordinates(x))
+Base.size(x::GeometricObject) = (length(x),)
+Base.length(x::GeometricObject) = length(coordinates(x))
 
 @inline function Base.getindex(x::GeometricObject, i::Int)
     @boundscheck checkbounds(x, i)
@@ -30,6 +31,9 @@ end
     @inbounds coordinates(x)[i] = v
     x
 end
+
+Base.checkbounds(x::GeometricObject, i::Int) = checkbounds(coordinates(x), i)
+Base.checkbounds(::Type{Bool}, x::GeometricObject, i::Int) = checkbounds(Bool, coordinates(x), i)
 
 moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(x.shape)
 

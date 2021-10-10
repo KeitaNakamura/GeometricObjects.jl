@@ -45,7 +45,7 @@
 
     # enlarge
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
-    @test (@inferred enlarge(line, 1.1))::Line ≈ [[-0.05, 0.0], [1.05, 0.0]]
+    @test coordinates((@inferred enlarge(line, 1.1))::Line) ≈ [[-0.05, 0.0], [1.05, 0.0]]
 
     # intersect
     ## 2D

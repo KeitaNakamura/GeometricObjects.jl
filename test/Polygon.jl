@@ -55,17 +55,17 @@
     poly = Polygon([Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0)])
     rotate!(poly, Vec(0.0,0.0,1.0) * π/4)
     @test centroid(poly) ≈ [0.5,0.5]
-    @test poly ≈ [[0.5, 0.5-1/√2], [0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5]]
+    @test coordinates(poly) ≈ [[0.5, 0.5-1/√2], [0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5]]
     rotate!(poly, Vec(0.0,0.0,1.0) * π/2)
     @test centroid(poly) ≈ [0.5,0.5]
-    @test poly ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
+    @test coordinates(poly) ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
     xc = centroid(poly)
-    for i in eachindex(poly)
+    for i in 1:length(poly)
         poly[i] = xc + rotate(poly[i] - xc, inv(poly.q))
     end
-    @test poly ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]]
+    @test coordinates(poly) ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]]
     translate!(poly, Vec(0.4, 0.3))
-    @test poly ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]] .+ Vec(0.4, 0.3)
+    @test coordinates(poly) ≈ [[0.0,0.0], [1.0,0.0], [1.0,1.0], [0.0,1.0]] .+ Vec(0.4, 0.3)
 
     # distance
     poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (10,10), (0,10)])
@@ -92,7 +92,7 @@
 
     # enlarge
     poly = Polygon(Vec{2,Float64}[(0,0), (1,0), (1,1), (0,1)])
-    @test (@inferred enlarge(poly, 1.1))::Polygon ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
+    @test coordinates((@inferred enlarge(poly, 1.1))::Polygon) ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
 
     # intersect
     poly = Polygon([Vec(0.0,1.0), Vec(1.0,0.0), Vec(1.0,1.0)])

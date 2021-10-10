@@ -1,9 +1,9 @@
 abstract type AbstractLine{dim, T} <: Shape{dim, T} end
 
-centroid(line::AbstractLine) = sum(line) / 2
+centroid(line::AbstractLine) = sum(coordinates(line)) / 2
 
 function moment_of_inertia(line::AbstractLine{2})
-    a, b = line
+    a, b = coordinates(line)
     v = b - a
     l² = v ⋅ v
     symmetric(@Mat([0 0 0
@@ -12,7 +12,7 @@ function moment_of_inertia(line::AbstractLine{2})
 end
 
 function moment_of_inertia(line::AbstractLine{3, T}) where {T}
-    a, b = line
+    a, b = coordinates(line)
     v = b - a
     l² = v ⋅ v
     I = symmetric(@Mat([l²/12 0     0
@@ -120,7 +120,7 @@ end
 function Base.in(X::Vec{2}, line::AbstractLine{2})
     @inbounds begin
         x, y = X[1], X[2]
-        a, b = line
+        a, b = coordinates(line)
         a_x, a_y = a[1], a[2]
         b_x, b_y = b[1], b[2]
     end
@@ -136,7 +136,7 @@ end
 function ray_casting_to_right(line::AbstractLine{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]
-        a, b = line
+        a, b = coordinates(line)
         a_x, a_y = a[1], a[2]
         b_x, b_y = b[1], b[2]
     end

@@ -1,4 +1,4 @@
-abstract type Shape{dim, T} <: AbstractVector{Vec{dim, T}} end
+abstract type Shape{dim, T} end
 
 function Shape(::Type{S}, coordinates::AbstractVector{<: Vec{dim, T}}, args...) where {S <: Shape, dim, T}
     q = quaternion(T, 0, Vec(0,0,1))
@@ -8,7 +8,11 @@ end
 coordinates(x::Shape) = x.coordinates
 centered(x::Shape) = coordinates(x) .- centroid(x) # call coordinates to keep type of coordinates in broadcast, otherwise always return `Vector`
 
-Base.size(x::Shape) = size(coordinates(x))
+Base.size(x::Shape) = (length(x),)
+Base.length(x::Shape) = length(coordinates(x))
+
+Base.checkbounds(x::Shape, i::Int) = checkbounds(coordinates(x), i)
+Base.checkbounds(::Type{Bool}, x::Shape, i::Int) = checkbounds(Bool, coordinates(x), i)
 
 @inline function Base.getindex(x::Shape, i::Int)
     @boundscheck checkbounds(x, i)
@@ -20,6 +24,8 @@ end
     @inbounds coordinates(x)[i] = v
     x
 end
+
+Base.:(==)(x::Shape, y::Shape) = coordinates(x) == coordinates(y)
 
 moment_of_inertia(x::Shape) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
@@ -40,7 +46,8 @@ end
 end
 
 function translate!(shape::Shape, u::Vec)
-    @. shape = shape + u
+    xᵢ = coordinates(shape)
+    @. xᵢ = xᵢ + u
     shape
 end
 
@@ -48,7 +55,8 @@ function rotate!(shape::Shape, θ::Vec)
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     q = exp(Quaternion(θ/2))
     xc = centroid(shape)
-    @. shape = xc + rotate(shape - xc, q)
+    xᵢ = coordinates(shape)
+    @. xᵢ = xc + rotate(xᵢ - xc, q)
     shape.q = q * shape.q
     shape
 end

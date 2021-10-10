@@ -7,13 +7,13 @@ function vtk_format(x::AbstractVector{<: Vec{dim, T}}) where {dim, T}
 end
 
 function WriteVTK.vtk_grid(vtk::AbstractString, line::AbstractLine)
-    coords = vtk_format(line)
+    coords = vtk_format(coordinates(line))
     cells = [MeshCell(VTKCellTypes.VTK_LINE, collect(1:size(coords, 2)))]
     vtk_grid(vtk, coords, cells)
 end
 
 function WriteVTK.vtk_grid(vtk::AbstractString, poly::Polygon)
-    coords = vtk_format(poly)
+    coords = vtk_format(coordinates(poly))
     cells = [MeshCell(VTKCellTypes.VTK_POLYGON, collect(1:size(coords, 2)))]
     vtk_grid(vtk, coords, cells)
 end
