@@ -51,6 +51,11 @@
     @test in(Vec(0.6,0.4), poly; include_bounds = true)  == true
     @test in(Vec(0.6,0.4), poly; include_bounds = false) == false
 
+    # findall for `in`
+    poly = Polygon(Vec{2,Float64}[(0.0,0.0), (1.0,0.0), (1.0,1.0), (0.0,1.0)])
+    points = Vec{2,Float64}[(0.5,0.5), (0.8,0.6), (1.2,1.8), (0.1,0.2)]
+    @test findall(in(poly), points) == [1,2,4]
+
     # translate!, rotate!
     poly = Polygon([Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0)])
     rotate!(poly, Vec(0.0,0.0,1.0) * π/4)
