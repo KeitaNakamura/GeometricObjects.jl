@@ -77,6 +77,23 @@
     @test distance(poly, Vec(-1.0,11.0), 2.0) ≈ [1,-1]
     @test distance(poly, Vec(-1.0,5.0), 2.0) ≈ [1,0]
     @test distance(poly, Vec(-1.0,-1.0), 2.0) ≈ [1,1]
+    line_values = [1.0,2.0,3.0,4.0]
+    @test distance(poly, Vec(5.0,-1.0), 2.0, line_values)[1] ≈ [0,1]
+    @test distance(poly, Vec(11.0,-1.0), 2.0, line_values)[1] ≈ [-1,1]
+    @test distance(poly, Vec(11.0,5.0), 2.0, line_values)[1] ≈ [-1,0]
+    @test distance(poly, Vec(11.0,11.0), 2.0, line_values)[1] ≈ [-1,-1]
+    @test distance(poly, Vec(5.0,11.0), 2.0, line_values)[1] ≈ [0,-1]
+    @test distance(poly, Vec(-1.0,11.0), 2.0, line_values)[1] ≈ [1,-1]
+    @test distance(poly, Vec(-1.0,5.0), 2.0, line_values)[1] ≈ [1,0]
+    @test distance(poly, Vec(-1.0,-1.0), 2.0, line_values)[1] ≈ [1,1]
+    @test distance(poly, Vec(5.0,-1.0), 2.0, line_values)[2] == 1.0
+    @test distance(poly, Vec(11.0,-1.0), 2.0, line_values)[2] == 1.5
+    @test distance(poly, Vec(11.0,5.0), 2.0, line_values)[2] == 2.0
+    @test distance(poly, Vec(11.0,11.0), 2.0, line_values)[2] == 2.5
+    @test distance(poly, Vec(5.0,11.0), 2.0, line_values)[2] == 3.0
+    @test distance(poly, Vec(-1.0,11.0), 2.0, line_values)[2] == 3.5
+    @test distance(poly, Vec(-1.0,5.0), 2.0, line_values)[2] == 4.0
+    @test distance(poly, Vec(-1.0,-1.0), 2.0, line_values)[2] == 2.5
     # reverse version
     poly = Polygon(Vec{2,Float64}[(0,0), (0,10), (10,10), (10,0)])
     @test distance(poly, Vec(5.0,0.5), 1.0) ≈ [0,-0.5]
@@ -85,6 +102,19 @@
     @test distance(poly, Vec(9.5,9.0), 1.0) ≈ [0.25,0.5]
     @test distance(poly, Vec(5.0,9.5), 1.0) ≈ [0,0.5]
     @test distance(poly, Vec(1.0,9.5), 1.0) ≈ [-0.5,0.25]
+    line_values = [1.0,2.0,3.0,4.0]
+    @test distance(poly, Vec(5.0,0.5), 1.0, line_values)[1] ≈ [0,-0.5]
+    @test distance(poly, Vec(9.0,0.5), 1.0, line_values)[1] ≈ [0.5,-0.25]
+    @test distance(poly, Vec(9.5,5.0), 1.0, line_values)[1] ≈ [0.5,0]
+    @test distance(poly, Vec(9.5,9.0), 1.0, line_values)[1] ≈ [0.25,0.5]
+    @test distance(poly, Vec(5.0,9.5), 1.0, line_values)[1] ≈ [0,0.5]
+    @test distance(poly, Vec(1.0,9.5), 1.0, line_values)[1] ≈ [-0.5,0.25]
+    @test distance(poly, Vec(5.0,0.5), 1.0, line_values)[2] ≈ 4.0
+    @test distance(poly, Vec(9.0,0.5), 1.0, line_values)[2] ≈ 3.5
+    @test distance(poly, Vec(9.5,5.0), 1.0, line_values)[2] ≈ 3.0
+    @test distance(poly, Vec(9.5,9.0), 1.0, line_values)[2] ≈ 2.5
+    @test distance(poly, Vec(5.0,9.5), 1.0, line_values)[2] ≈ 2.0
+    @test distance(poly, Vec(1.0,9.5), 1.0, line_values)[2] ≈ 1.5
 
     # area
     poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (8,5), (3,5)])
