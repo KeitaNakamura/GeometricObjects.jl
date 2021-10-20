@@ -93,11 +93,7 @@ end
 
 @inline function getline(poly::Polygon, i::Int)
     @boundscheck checkbounds(poly, i)
-    if i == length(poly)
-        @inbounds SLine(poly[i], poly[1])
-    else
-        @inbounds SLine(poly[i], poly[i+1])
-    end
+    @inbounds SLine(poly[i], poly[i+1]) # getindex at `length+1` is supported in `getindex`
 end
 
 function Base.eachline(poly::Polygon)
@@ -134,6 +130,35 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
 
     for xᵢ in poly
         xᵢ in SCircle(x, r) && return xᵢ - x
+    end
+    nothing
+end
+
+function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::AbstractVector{U}) where {T, U}
+    @assert length(poly) == length(line_values)
+    dist = zero(Vec{2, T})
+    value = zero(U)
+    count = 0
+    @inbounds for i in eachindex(poly)
+        line = getline(poly, i)
+        d = distance(line, x, r)
+        if d !== nothing
+            dist += d
+            value += line_values[i]
+            count += 1
+        end
+    end
+    count != 0 && return (dist/count, value/count)
+
+    @inbounds for i in eachindex(poly)
+        xᵢ = poly[i]
+        if xᵢ in SCircle(x, r)
+            if i == 1
+                return (xᵢ - x), (line_values[end] + line_values[i]) / 2
+            else
+                return (xᵢ - x), (line_values[i-1] + line_values[i]) / 2
+            end
+        end
     end
     nothing
 end
