@@ -114,3 +114,9 @@ Base.in(x::Vec, obj::GeometricObject) = x in obj.shape
 function Base.in(obj::GeometricObject, x::Vec)
     throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
 end
+
+for IterType in (:Tuple, :AbstractArray)
+    @eval function Base.findall(pred::Base.Fix2{typeof(in), <: GeometricObject}, iter::$IterType)
+        findall(x -> in(x, pred.x), iter)
+    end
+end

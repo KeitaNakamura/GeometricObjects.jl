@@ -52,3 +52,9 @@ function rotate!(shape::Shape, θ::Vec)
     shape.q = q * shape.q
     shape
 end
+
+for IterType in (:Tuple, :AbstractArray)
+    @eval function Base.findall(pred::Base.Fix2{typeof(in), <: Shape}, iter::$IterType)
+        findall(x -> in(x, pred.x), iter)
+    end
+end
