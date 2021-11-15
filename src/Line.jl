@@ -114,22 +114,7 @@ false
 """
 function Base.in(x::Vec, line::AbstractLine)
     d, scale = _distance(line, x)
-    0 ≤ scale ≤ 1 && (d ⋅ d) < eps(eltype(d))
-end
-# much faster for 2D
-function Base.in(X::Vec{2}, line::AbstractLine{2})
-    @inbounds begin
-        x, y = X[1], X[2]
-        a, b = line
-        a_x, a_y = a[1], a[2]
-        b_x, b_y = b[1], b[2]
-    end
-    if (a_x ≤ x ≤ b_x) || (b_x ≤ x ≤ a_x)
-        if (a_y ≤ y ≤ b_y) || (b_y ≤ y ≤ a_y)
-            (x - a_x) * (b_y - a_y) == (y - a_y) * (b_x - a_x) && return true
-        end
-    end
-    false
+    0 ≤ scale ≤ 1 && (d ⋅ d) < sqrt(eps(eltype(d)))
 end
 
 # helper function for `in(x, polygon)`
