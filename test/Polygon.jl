@@ -134,4 +134,7 @@
     line = Line(Vec(0.0,0.0), Vec(0.2,0.2));
     @test intersect(poly, line, extended = true) ≈ [0.5,0.5]
     @test intersect(poly, line, extended = false) === nothing
+    line = Line(Vec(2.0,-0.2), Vec(1.8,-0.2));
+    @test intersect(poly, line, extended = true) === nothing
+    @test intersect(poly, line, extended = false) === nothing
 end

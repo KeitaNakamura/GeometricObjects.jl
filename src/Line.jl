@@ -149,12 +149,12 @@ function ray_casting_to_right(line::AbstractLine{2}, X::Vec{2})
 end
 
 """
-    intersect(::AbstractLine, ::AbstractLine; [extended = false])
+    intersect(::AbstractLine, ::AbstractLine; [extended = (false, false)])
 
 Find intersection point from two lines.
 Return `nothing` if not found.
 """
-function Base.intersect(line1::AbstractLine{2}, line2::AbstractLine{2}; extended::Bool = false)
+function Base.intersect(line1::AbstractLine{2}, line2::AbstractLine{2}; extended::Tuple{Bool, Bool} = (false, false))
     x1, y1 = line1[1]
     x2, y2 = line1[2]
     x3, y3 = line2[1]
@@ -166,10 +166,10 @@ function Base.intersect(line1::AbstractLine{2}, line2::AbstractLine{2}; extended
     p1 = (x1y2_y1x2*(x3-x4) - (x1-x2)*x3y4_y3x4) / D
     p2 = (x1y2_y1x2*(y3-y4) - (y1-y2)*x3y4_y3x4) / D
     p = Vec(p1, p2)
-    ifelse(extended || (p in line1 && p in line2), p, nothing)
+    ifelse((extended[1] || p in line1) && (extended[2] || p in line2), p, nothing)
 end
 
-function Base.intersect(line1::AbstractLine{3}, line2::AbstractLine{3}; extended::Bool = false)
+function Base.intersect(line1::AbstractLine{3}, line2::AbstractLine{3}; extended::Tuple{Bool, Bool} = (false, false))
     n1 = normalize(line1[2] - line1[1])
     n2 = normalize(line2[2] - line2[1])
     v = line2[1] - line1[1]
@@ -181,7 +181,7 @@ function Base.intersect(line1::AbstractLine{3}, line2::AbstractLine{3}; extended
     p1 = line1[1] + d1 * n1
     p2 = line2[1] + d2 * n2
     p1 ≈ p2 || return nothing
-    ifelse(extended || (p1 in line1 && p1 in line2), p1, nothing)
+    ifelse((extended[1] || p1 in line1) && (extended[2] || p1 in line2), p1, nothing)
 end
 
 # static version for fast computation

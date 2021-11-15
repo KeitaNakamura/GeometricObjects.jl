@@ -173,7 +173,7 @@ function Base.intersect(poly::Polygon{dim, T}, line::AbstractLine; extended::Boo
     output = zero(Vec{dim, T})
     dist = T(Inf)
     @inbounds for i in eachindex(poly)
-        p = intersect(getline(poly, i), line; extended)
+        p = intersect(getline(poly, i), line; extended = (false, extended))
         p === nothing && continue
         v = line[1] - p
         vv = v ⋅ v
