@@ -51,11 +51,21 @@
     ## 2D
     line1 = Line(Vec(0.0,0.0), Vec(0.2,0.2));
     line2 = Line(Vec(0.0,1.0), Vec(1.0,0.0));
-    @test intersect(line1, line2, extended = true) ≈ [0.5,0.5]
-    @test intersect(line1, line2, extended = false) === nothing
+    @test intersect(line1, line2, extended = (true, true))  ≈ [0.5,0.5]
+    @test intersect(line1, line2, extended = (true, false)) ≈ [0.5,0.5]
+    @test intersect(line1, line2, extended = (false, true))  === nothing
+    @test intersect(line1, line2, extended = (false, false)) === nothing
+    line1 = Line(Vec(0.0,0.0), Vec(0.2,0.2));
+    line2 = Line(Vec(0.0,1.0), Vec(0.2,0.8));
+    @test intersect(line1, line2, extended = (true, true))  ≈ [0.5,0.5]
+    @test intersect(line1, line2, extended = (true, false)) === nothing
+    @test intersect(line1, line2, extended = (false, true))  === nothing
+    @test intersect(line1, line2, extended = (false, false)) === nothing
     ## 3D
     line1 = Line(Vec(0.0,0.0,0.0), Vec(0.2,0.2,0.2));
     line2 = Line(Vec(0.0,1.0,0.0), Vec(1.0,0.0,1.0));
-    @test intersect(line1, line2, extended = true) ≈ [0.5,0.5,0.5]
-    @test intersect(line1, line2, extended = false) === nothing
+    @test intersect(line1, line2, extended = (true, true))  ≈ [0.5,0.5,0.5]
+    @test intersect(line1, line2, extended = (true, false)) ≈ [0.5,0.5,0.5]
+    @test intersect(line1, line2, extended = (false, true))  === nothing
+    @test intersect(line1, line2, extended = (false, false)) === nothing
 end
