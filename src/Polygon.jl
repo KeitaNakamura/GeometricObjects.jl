@@ -36,6 +36,11 @@ end
     end
 end
 
+@inline function Base.getindex(poly::Polygon, I::AbstractUnitRange{Int})
+    @_propagate_inbounds_meta
+    Polyline(getindex.(Ref(poly), I), poly.q)
+end
+
 # https://en.wikipedia.org/wiki/Centroid
 function centroid(poly::Polygon{2, T}) where {T}
     A = zero(T)
