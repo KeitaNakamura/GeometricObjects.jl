@@ -1,4 +1,13 @@
 @testset "GeometricObject" begin
+    @testset "compute_force_moment" begin
+        circle = GeometricObject(Circle(Vec(0.0,0.0), 2.0))
+        F, M = GeometricObjects.compute_force_moment(circle, [Vec(0.0,1.0), Vec(0.0,1.0)], [Vec(1.0,0.0), Vec(-0.5,0.0)])
+        @test F ≈ Vec(0.0,2.0)
+        @test M ≈ Vec(0.0,0.0,0.5)
+        F, M = GeometricObjects.compute_force_moment(circle, Vec{2,Float64}[], Vec{2,Float64}[])
+        @test F ≈ Vec(0.0,0.0)
+        @test M ≈ Vec(0.0,0.0,0.0)
+    end
     # check common methods for GeometricObject
     @testset "Line" begin
         ## 2D
