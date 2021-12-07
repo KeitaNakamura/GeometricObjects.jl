@@ -96,11 +96,11 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     obj
 end
 
-function compute_force_moment(obj::GeometricObject, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec})
+function compute_force_moment(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{Vec{dim, T}}, xᵢ::AbstractArray{Vec{dim, T}}) where {dim, T}
     promote_shape(Fᵢ, xᵢ)
     xc = centroid(obj)
     F = sum(Fᵢ)
-    M = sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ))
+    M = sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ); init = zero(Vec{3, T}))
     F, M
 end
 
