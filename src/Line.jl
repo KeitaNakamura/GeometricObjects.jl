@@ -1,8 +1,18 @@
-abstract type AbstractLine{dim, T} <: Shape{dim, T} end
+"""
+    Line(a::Vec, b::Vec)
+    Line(a::Vec => b::Vec)
+"""
+struct Line{dim, T} <: Shape{dim, T}
+    coordinates::SVector{2, Vec{dim, T}}
+    q::Quaternion{T}
+end
 
-centroid(line::AbstractLine) = sum(line) / 2
+Line(a::Vec, b::Vec) = Shape(Line, @SVector[a, b])
+Line(pair::Pair) = Line(pair.first, pair.second)
 
-function moment_of_inertia(line::AbstractLine{2})
+centroid(line::Line) = sum(line) / 2
+
+function moment_of_inertia(line::Line{2})
     a, b = line
     v = b - a
     l² = v ⋅ v
@@ -11,7 +21,7 @@ function moment_of_inertia(line::AbstractLine{2})
                     0 0 l²/12]), :U)
 end
 
-function moment_of_inertia(line::AbstractLine{3, T}) where {T}
+function moment_of_inertia(line::Line{3, T}) where {T}
     a, b = line
     v = b - a
     l² = v ⋅ v
@@ -23,7 +33,7 @@ function moment_of_inertia(line::AbstractLine{3, T}) where {T}
     rotate(I, R)
 end
 
-@inline function _distance(line::AbstractLine, x::Vec)
+@inline function _distance(line::Line, x::Vec)
     @inbounds begin
         v = line[2] - line[1]
         a_to_x = x - line[1]
@@ -34,8 +44,8 @@ end
 end
 
 """
-    distance(::AbstractLine, x::Vec)
-    distance(::AbstractLine, x::Vec, threshold::Real)
+    distance(::Line, x::Vec)
+    distance(::Line, x::Vec, threshold::Real)
 
 Compute the distance vector from `x` to perpendicular foot.
 When `threshold` is given, check the contact between line and point `x`,
@@ -63,11 +73,11 @@ julia> distance(line, @Vec[1.0, 0.0], 0.5) === nothing
 true
 ```
 """
-function distance(line::AbstractLine, x::Vec)
+function distance(line::Line, x::Vec)
     _distance(line, x)[1]
 end
 
-@inline function distance(line::AbstractLine, x::Vec, r::Real)
+@inline function distance(line::Line, x::Vec, r::Real)
     r² = r^2
     d, scale = _distance(line, x)
     if 0 ≤ scale ≤ 1 # perpendicular foot is on line
@@ -77,15 +87,15 @@ end
 end
 
 """
-    GeometricObjects.perpendicularfoot(::AbstractLine, x::Vec)
+    GeometricObjects.perpendicularfoot(::Line, x::Vec)
 
 Compute the position of perpendicular foot.
 """
-function perpendicularfoot(line::AbstractLine, x::Vec)
+function perpendicularfoot(line::Line, x::Vec)
     x + distance(line, x)
 end
 
-function normalunit(line::AbstractLine{2})
+function normalunit(line::Line{2})
     @inbounds begin
         v = line[2] - line[1]
         n = Vec(v[2], -v[1])
@@ -94,7 +104,7 @@ function normalunit(line::AbstractLine{2})
 end
 
 """
-    in(x::Vec, line::AbstractLine)
+    in(x::Vec, line::Line)
 
 Check if `x` is `in` line.
 
@@ -112,13 +122,13 @@ julia> @Vec[1.0, 0.0] in line
 false
 ```
 """
-function Base.in(x::Vec, line::AbstractLine)
+function Base.in(x::Vec, line::Line)
     d, scale = _distance(line, x)
     0 ≤ scale ≤ 1 && (d ⋅ d) < sqrt(eps(eltype(d)))
 end
 
 # helper function for `in(x, polygon)`
-function ray_casting_to_right(line::AbstractLine{2}, X::Vec{2})
+function ray_casting_to_right(line::Line{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]
         a, b = line
@@ -134,12 +144,12 @@ function ray_casting_to_right(line::AbstractLine{2}, X::Vec{2})
 end
 
 """
-    intersect(::AbstractLine, ::AbstractLine; [extended = (false, false)])
+    intersect(::Line, ::Line; [extended = (false, false)])
 
 Find intersection point from two lines.
 Return `nothing` if not found.
 """
-function Base.intersect(line1::AbstractLine{2}, line2::AbstractLine{2}; extended::Tuple{Bool, Bool} = (false, false))
+function Base.intersect(line1::Line{2}, line2::Line{2}; extended::Tuple{Bool, Bool} = (false, false))
     x1, y1 = line1[1]
     x2, y2 = line1[2]
     x3, y3 = line2[1]
@@ -154,7 +164,7 @@ function Base.intersect(line1::AbstractLine{2}, line2::AbstractLine{2}; extended
     ifelse((extended[1] || p in line1) && (extended[2] || p in line2), p, nothing)
 end
 
-function Base.intersect(line1::AbstractLine{3}, line2::AbstractLine{3}; extended::Tuple{Bool, Bool} = (false, false))
+function Base.intersect(line1::Line{3}, line2::Line{3}; extended::Tuple{Bool, Bool} = (false, false))
     n1 = normalize(line1[2] - line1[1])
     n2 = normalize(line2[2] - line2[1])
     v = line2[1] - line1[1]
@@ -168,32 +178,3 @@ function Base.intersect(line1::AbstractLine{3}, line2::AbstractLine{3}; extended
     p1 ≈ p2 || return nothing
     ifelse((extended[1] || p1 in line1) && (extended[2] || p1 in line2), p1, nothing)
 end
-
-# static version for fast computation
-struct SLine{dim, T} <: AbstractLine{dim, T}
-    a::Vec{dim, T}
-    b::Vec{dim, T}
-end
-
-coordinates(line::SLine) = SVector(line.a, line.b)
-
-Base.reverse(line::SLine) = SLine(line.b, line.a)
-
-function Base.getindex(line::SLine, i::Int)
-    @boundscheck checkbounds(line, i)
-    i == 1 && return line.a
-    i == 2 && return line.b
-    error() # unreachable
-end
-
-"""
-    Line(a::Vec, b::Vec)
-    Line(a::Vec => b::Vec)
-"""
-mutable struct Line{dim, T} <: AbstractLine{dim, T}
-    coordinates::MVector{2, Vec{dim, T}}
-    q::Quaternion{T}
-end
-
-Line(a::Vec, b::Vec) = Shape(Line, @MVector[a, b])
-Line(pair::Pair) = Line(pair.first, pair.second)
