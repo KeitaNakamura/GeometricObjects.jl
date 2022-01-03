@@ -64,8 +64,9 @@ Check if `x` is `in` a sphere.
 
 ```jldoctest
 julia> sphere = Sphere(Vec(1.0,1.0), 1.0)
-1-element Sphere{2, Float64}:
- [1.0, 1.0]
+Sphere{2, Float64}:
+  Coordinates: [[1.0, 1.0]]
+  Attitude: [1.0, 0.0]
 
 julia> Vec(0.5, 0.5) in sphere
 true
@@ -92,8 +93,9 @@ and return `nothing` if contact is not detected.
 
 ```jldoctest
 julia> sphere = Sphere(Vec(1.0,1.0), 1.0)
-1-element Sphere{2, Float64}:
- [1.0, 1.0]
+Sphere{2, Float64}:
+  Coordinates: [[1.0, 1.0]]
+  Attitude: [1.0, 0.0]
 
 julia> d = distance(sphere, Vec(0.0,0.0))
 2-element Vec{2, Float64}:
