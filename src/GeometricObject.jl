@@ -20,12 +20,18 @@ for f in (:centroid, :centered, :area, :translate, :rotate, :distance) # call th
 end
 
 Base.size(x::GeometricObject) = size(coordinates(x))
+Base.length(x::GeometricObject) = length(coordinates(x))
+
+Base.eltype(x::GeometricObject{dim, T}) where {dim, T} = Vec{dim, T}
+Base.eachindex(x::GeometricObject) = Base.OneTo(length(x))
 
 Base.checkbounds(x::GeometricObject, i...) = checkbounds(coordinates(x), i...)
 @inline function Base.getindex(x::GeometricObject, i::Int)
     @boundscheck checkbounds(x, i)
     @inbounds coordinates(x)[i]
 end
+
+@inline Base.iterate(x::GeometricObject, i = 1) = (i % UInt) - 1 < length(x) ? (@inbounds x[i], i + 1) : nothing
 
 @inline Base.getindex(x::GeometricObject) = x.shape
 @inline Base.setindex!(x::GeometricObject, shape) = x.shape = shape
