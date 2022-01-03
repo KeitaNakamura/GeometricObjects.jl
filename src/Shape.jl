@@ -7,7 +7,8 @@ end
 
 coordinates(x::Shape) = x.coordinates
 quaternion(x::Shape) = x.q
-centered(x::Shape) = coordinates(x) .- centroid(x) # call coordinates to keep type of coordinates in broadcast, otherwise always return `Vector`
+attitude(x::Shape{2, T}) where {T} = rotate(Vec{2,T}(1,0), quaternion(x))
+attitude(x::Shape{3, T}) where {T} = rotate(Vec{3,T}(1,0,0), quaternion(x))
 
 Base.size(x::Shape) = size(coordinates(x))
 Base.length(x::Shape) = length(coordinates(x))
@@ -32,14 +33,20 @@ moment_of_inertia(x::Shape) = throw(ArgumentError("$(typeof(x)) is not supported
     end
 end
 
+function centered(x::Shape)
+    copy_shape(x, coordinates(x) .- centroid(x), quaternion(x))
+end
+
 function enlarge(shape::Shape, R::Real)
-    coordinates = centroid(shape) .+ R * centered(shape)
-    copy_shape(shape, coordinates, quaternion(shape))
+    copy_shape(
+        shape,
+        centroid(shape) .+ R * coordinates(centered(shape)),
+        quaternion(shape),
+    )
 end
 
 function Base.reverse(shape::Shape)
-    coordinates = reverse(shape.coordinates)
-    copy_shape(shape, coordinates, quaternion(shape))
+    copy_shape(shape, reverse(shape.coordinates), quaternion(shape))
 end
 
 function translate(shape::Shape, u::Vec)
@@ -52,9 +59,11 @@ function _rotate(shape::Shape, θ::Vec)
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     q = exp(Quaternion(θ/2))
     xc = centroid(shape)
-    coordinates = @. xc + rotate(shape.coordinates - xc, q)
-    q = q * shape.q
-    copy_shape(shape, coordinates, q)
+    copy_shape(
+        shape,
+        (@. xc + rotate($coordinates(shape) - xc, q)),
+        q * quaternion(shape),
+    )
 end
 
 for IterType in (:Tuple, :AbstractArray)
@@ -66,9 +75,6 @@ end
 # isapprox
 Base.isapprox(x::Shape, y::AbstractVector; kwargs...) = isapprox(coordinates(x), y; kwargs...)
 Base.isapprox(x::AbstractVector, y::Shape; kwargs...) = isapprox(x, coordinates(y); kwargs...)
-
-attitude(x::Shape{2, T}) where {T} = rotate(Vec{2,T}(1,0), quaternion(x))
-attitude(x::Shape{3, T}) where {T} = rotate(Vec{3,T}(1,0,0), quaternion(x))
 
 function Base.show(io::IO, mime::MIME"text/plain", x::Shape)
     print(io, typeof(x), ":\n")

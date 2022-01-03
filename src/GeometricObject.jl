@@ -13,6 +13,7 @@ function GeometricObject(shape::Shape{dim, T}) where {dim, T}
 end
 
 coordinates(x::GeometricObject) = coordinates(x.shape)
+quaternion(x::GeometricObject) = quaternion(x.shape)
 attitude(x::GeometricObject) = attitude(x.shape)
 
 for f in (:centroid, :centered, :area, :translate, :rotate, :distance) # call the same function of `Shape`
