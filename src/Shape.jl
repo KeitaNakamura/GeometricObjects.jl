@@ -12,7 +12,8 @@ centered(x::Shape) = coordinates(x) .- centroid(x) # call coordinates to keep ty
 Base.size(x::Shape) = size(coordinates(x))
 Base.length(x::Shape) = length(coordinates(x))
 
-Base.keys(x::Shape) = LinearIndices(size(x))
+Base.eltype(x::Shape{dim, T}) where {dim, T} = Vec{dim, T}
+Base.eachindex(x::Shape) = Base.OneTo(length(x))
 
 Base.checkbounds(x::Shape, i...) = checkbounds(coordinates(x), i...)
 @inline function Base.getindex(x::Shape, i::Int)
