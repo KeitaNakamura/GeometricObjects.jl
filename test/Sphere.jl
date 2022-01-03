@@ -4,7 +4,7 @@
     # enlarge
     R = 1.1
     sphere′ = (@inferred enlarge(sphere, R))::Sphere
-    @test sphere == sphere′
+    @test coordinates(sphere) == coordinates(sphere′)
     @test centroid(sphere) == centroid(sphere′)
     @test R * radius(sphere) == radius(sphere′)
 end
@@ -16,7 +16,7 @@ end
     # enlarge
     R = 1.1
     circle′ = (@inferred enlarge(circle, R))::Circle
-    @test circle == circle′
+    @test coordinates(circle) == coordinates(circle′)
     @test centroid(circle) == centroid(circle′)
     @test R * radius(circle) == radius(circle′)
 end

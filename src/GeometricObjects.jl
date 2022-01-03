@@ -8,6 +8,8 @@ using RecipesBase
 
 using Base: @_propagate_inbounds_meta
 
+import Tensorial: rotate, quaternion
+
 export
 # Shape
     Shape,
@@ -15,9 +17,11 @@ export
     area,
     distance,
     moment_of_inertia,
-    translate!,
-    rotate!,
+    translate,
+    rotate,
     enlarge,
+    coordinates,
+    attitude,
 # Line
     Line,
 # Polygon

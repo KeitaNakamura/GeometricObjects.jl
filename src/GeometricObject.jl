@@ -1,4 +1,4 @@
-mutable struct GeometricObject{dim, T, S <: Shape{dim, T}} <: AbstractVector{Vec{dim, T}}
+mutable struct GeometricObject{dim, T, S <: Shape{dim, T}}
     shape::S
     m::T
     v::Vec{dim, T}
@@ -13,23 +13,22 @@ function GeometricObject(shape::Shape{dim, T}) where {dim, T}
 end
 
 coordinates(x::GeometricObject) = coordinates(x.shape)
+attitude(x::GeometricObject) = attitude(x.shape)
 
-for f in (:centroid, :centered, :area, :translate!, :rotate!, :distance) # call the same function of `Shape`
+for f in (:centroid, :centered, :area, :translate, :rotate, :distance) # call the same function of `Shape`
     @eval $f(x::GeometricObject, args...; kwargs...) = $f(x.shape, args...; kwargs...)
 end
 
 Base.size(x::GeometricObject) = size(coordinates(x))
 
+Base.checkbounds(x::GeometricObject, i...) = checkbounds(coordinates(x), i...)
 @inline function Base.getindex(x::GeometricObject, i::Int)
     @boundscheck checkbounds(x, i)
     @inbounds coordinates(x)[i]
 end
 
-@inline function Base.setindex!(x::GeometricObject, v, i::Int)
-    @boundscheck checkbounds(x, i)
-    @inbounds coordinates(x)[i] = v
-    x
-end
+@inline Base.getindex(x::GeometricObject) = x.shape
+@inline Base.setindex!(x::GeometricObject, shape) = x.shape = shape
 
 moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(x.shape)
 
@@ -58,12 +57,21 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
                     0 0 inv(I[3,3])]), :U)
 end
 
-function update!(obj::GeometricObject, dt::Real)
+function update!(obj::GeometricObject{3}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
     dθ = obj.ω * dt
-    translate!(obj.shape, dx)
-    rotate!(obj.shape, dθ)
+    obj.shape = translate(obj.shape, dx)
+    obj.shape = rotate(obj.shape, dθ)
+    obj
+end
+
+function update!(obj::GeometricObject{2}, dt::Real)
+    # v and ω need to be updated in advance
+    dx = obj.v * dt
+    dθ = obj.ω * dt
+    obj.shape = translate(obj.shape, dx)
+    obj.shape = rotate(obj.shape, dθ[3])
     obj
 end
 
@@ -82,6 +90,7 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     obj
 end
 
+# 2D
 function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     m = obj.m
     v = obj.v
@@ -119,4 +128,15 @@ for IterType in (:Tuple, :AbstractArray)
     @eval function Base.findall(pred::Base.Fix2{typeof(in), <: GeometricObject}, iter::$IterType)
         findall(x -> in(x, pred.x), iter)
     end
+end
+
+function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
+    print(io, typeof(x), ":\n")
+    buf = IOBuffer()
+    show(buf, MIME("text/plain"), x.shape)
+    strings = map(line -> "  " * line, eachline(IOBuffer(take!(buf))))
+    print(io, join(strings, "\n"), "\n")
+    print(io, "  Mass: ", x.m, "\n")
+    print(io, "  Velocity: ", x.v, "\n")
+    print(io, "  Angular velocity: ", x.ω)
 end

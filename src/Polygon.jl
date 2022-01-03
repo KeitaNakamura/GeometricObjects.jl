@@ -1,5 +1,5 @@
-mutable struct Polygon{dim, T, V <: AbstractVector{Vec{dim, T}}} <: Shape{dim, T}
-    coordinates::V
+struct Polygon{dim, T, L} <: Shape{dim, T}
+    coordinates::SVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
 
@@ -8,14 +8,9 @@ _projection(v::Vec{2}, x::Real, ::Nothing, ::Nothing) = Vec(x, v[1], v[2]) # (y,
 _projection(v::Vec{2}, ::Nothing, y::Real, ::Nothing) = Vec(v[2], y, v[1]) # (z,x)
 _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,y)
 
-function Polygon(coordinates::AbstractVector{<: Vec{2}}; x = nothing, y = nothing, z = nothing)
-    coords = _projection.(coordinates, x, y, z)
-    Shape(Polygon, coords)
-end
-
 function Polygon(coordinates::Vec{2}...; x = nothing, y = nothing, z = nothing)
     coords = _projection.(coordinates, x, y, z)
-    Shape(Polygon, MVector(coords))
+    Shape(Polygon, SVector(coords))
 end
 
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}
@@ -23,7 +18,7 @@ function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = 
     y0 = bottomleft[2]
     x1 = topright[1]
     y1 = topright[2]
-    Polygon(@MVector[Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1)]; x, y, z)
+    Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1); x, y, z)
 end
 
 # handle end+1 index
@@ -98,7 +93,7 @@ end
 
 @inline function getline(poly::Polygon, i::Int)
     @boundscheck checkbounds(poly, i)
-    @inbounds SLine(poly[i], poly[i+1]) # getindex at `length+1` is supported in `getindex`
+    @inbounds Line(poly[i], poly[i+1]) # getindex at `length+1` is supported in `getindex`
 end
 
 function Base.eachline(poly::Polygon)
@@ -134,7 +129,7 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     count != 0 && return dist / count
 
     for xᵢ in poly
-        xᵢ in SCircle(x, r) && return xᵢ - x
+        xᵢ in Circle(x, r) && return xᵢ - x
     end
     nothing
 end
@@ -157,7 +152,7 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::Abstract
 
     @inbounds for i in eachindex(poly)
         xᵢ = poly[i]
-        if xᵢ in SCircle(x, r)
+        if xᵢ in Circle(x, r)
             if i == 1
                 return (xᵢ - x), (line_values[end] + line_values[i]) / 2
             else
@@ -169,12 +164,12 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::Abstract
 end
 
 """
-    intersect(::Polygon, ::AbstractLine; [extended = false])
+    intersect(::Polygon, ::Line; [extended = false])
 
 Find the closest intersection point from line to polygon.
 Return `nothing` if not found.
 """
-function Base.intersect(poly::Polygon{dim, T}, line::AbstractLine; extended::Bool = false) where {dim, T}
+function Base.intersect(poly::Polygon{dim, T}, line::Line; extended::Bool = false) where {dim, T}
     output = zero(Vec{dim, T})
     dist = T(Inf)
     @inbounds for i in eachindex(poly)

@@ -8,7 +8,7 @@ function unzip(v::AbstractVector{<: Vec{dim, T}}) where {dim, T}
     xyz
 end
 
-@recipe function f(line::AbstractLine)
+@recipe function f(line::Line)
     seriestype := :path
     aspect_ratio := :equal
     unzip(line)
@@ -20,7 +20,7 @@ end
     unzip(poly)
 end
 
-@recipe function f(sphere::Union{AbstractSphere{2}, AbstractCircle{2}})
+@recipe function f(sphere::Union{Sphere{2}, Circle{2}})
     seriestype := :shape
     aspect_ratio := :equal
     xc = centroid(sphere)
