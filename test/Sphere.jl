@@ -7,6 +7,9 @@
     @test coordinates(sphere) == coordinates(sphere′)
     @test centroid(sphere) == centroid(sphere′)
     @test R * radius(sphere) == radius(sphere′)
+
+    # centered
+    @test (@inferred GeometricObjects.centered(sphere))::Sphere ≈ [[0.0, 0.0, 0.0]]
 end
 
 @testset "Circle" begin
@@ -19,4 +22,7 @@ end
     @test coordinates(circle) == coordinates(circle′)
     @test centroid(circle) == centroid(circle′)
     @test R * radius(circle) == radius(circle′)
+
+    # centered
+    @test (@inferred GeometricObjects.centered(circle))::Circle ≈ [[0.0, 0.0]]
 end
