@@ -14,7 +14,7 @@
         @test M ≈ Vec(0.0,0.0,0.0)
     end
     # check common methods for GeometricObject
-    @testset "Line" begin
+    @testset "update!" begin
         ## 2D
         line = GeometricObject(Line(Vec(0.3,0.4) => Vec(0.5,0.4)))
         v = line[2] - line[1]

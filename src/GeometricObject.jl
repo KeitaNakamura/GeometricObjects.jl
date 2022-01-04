@@ -64,12 +64,22 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
                     0 0 inv(I[3,3])]), :U)
 end
 
+function translate!(obj::GeometricObject, u::Vec)
+    obj.shape = translate(obj.shape, u)
+    obj
+end
+
+function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
+    obj.shape = rotate(obj.shape, θ)
+    obj
+end
+
 function update!(obj::GeometricObject{3}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
     dθ = obj.ω * dt
-    obj.shape = translate(obj.shape, dx)
-    obj.shape = rotate(obj.shape, dθ)
+    translate!(obj, dx)
+    rotate!(obj, dθ)
     obj
 end
 
@@ -77,8 +87,8 @@ function update!(obj::GeometricObject{2}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
     dθ = obj.ω * dt
-    obj.shape = translate(obj.shape, dx)
-    obj.shape = rotate(obj.shape, dθ[3])
+    translate!(obj, dx)
+    rotate!(obj, dθ[3])
     obj
 end
 

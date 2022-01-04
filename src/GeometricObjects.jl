@@ -36,6 +36,8 @@ export
 # GeometricObject,
     GeometricObject,
     velocityat,
+    translate!,
+    rotate!,
 # VTK
     vtk_grid
 
