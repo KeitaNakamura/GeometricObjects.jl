@@ -55,13 +55,13 @@ end
 
 rotate(shape::Shape{3}, θ::Vec{3}) = _rotate(shape, θ)
 rotate(shape::Shape{2}, θ::Real) = _rotate(shape, Vec(0,0,θ))
-function _rotate(shape::Shape, θ::Vec)
+function _rotate(shape::Shape{dim}, θ::Vec) where {dim}
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     q = exp(Quaternion(θ/2))
     xc = centroid(shape)
     copy_shape(
         shape,
-        (@. xc + rotate($coordinates(shape) - xc, q)),
+        (@. xc + $Tensorial.resizedim(rotate($coordinates(shape) - xc, q), Val(dim))),
         q * quaternion(shape),
     )
 end
