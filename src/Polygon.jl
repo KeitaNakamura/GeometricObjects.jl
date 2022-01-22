@@ -106,10 +106,13 @@ end
 Check if `x` is `in` a polygon.
 """
 function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
-    I = 0
     @inbounds @simd for i in eachindex(poly)
         line = getline(poly, i)
         x in line && return include_bounds
+    end
+    I = 0
+    @inbounds @simd for i in eachindex(poly)
+        line = getline(poly, i)
         I += ray_casting_to_right(line, x)
     end
     isodd(I)
