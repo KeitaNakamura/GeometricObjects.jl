@@ -122,10 +122,15 @@ julia> @Vec[1.0, 0.0] in line
 false
 ```
 """
-function Base.in(x::Vec, line::Line)
-    d, scale = _distance(line, x)
-    0 ≤ scale ≤ 1 && (d ⋅ d) < sqrt(eps(eltype(d)))
+@inline function Base.in(x::Vec, line::Line)
+    @inbounds begin
+        ax = line[1] - x
+        bx = line[2] - x
+    end
+    ϵ = muladd(dot(ax,ax), dot(bx,bx), _pow2(dot(ax,bx)))
+    abs2(ϵ) < eps(typeof(ϵ))
 end
+_pow2(x) = x * abs(x)
 
 # helper function for `in(x, polygon)`
 function ray_casting_to_right(line::Line{2}, X::Vec{2})
@@ -135,9 +140,10 @@ function ray_casting_to_right(line::Line{2}, X::Vec{2})
         a_x, a_y = a[1], a[2]
         b_x, b_y = b[1], b[2]
     end
-    if (a_y ≤ y < b_y) || # upward case
-       (b_y ≤ y < a_y)    # downward case
-        x_line = a_x + (y - a_y) / (b_y - a_y) * (b_x - a_x)
+    h = b_y - a_y
+    y′ = y - a_y
+    if (0 ≤ y′ < h) || (h ≤ y′ < 0) # upward case || downward case
+        x_line = muladd(y′ / h, b_x - a_x, a_x)
         x < x_line && return true
     end
     false
