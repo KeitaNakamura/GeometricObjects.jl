@@ -105,17 +105,18 @@ end
 
 Check if `x` is `in` a polygon.
 """
-function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
-    @inbounds @simd for i in eachindex(poly)
-        line = getline(poly, i)
-        x in line && return include_bounds
-    end
+@inline function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
     @inbounds @simd for i in eachindex(poly)
         line = getline(poly, i)
-        I += ray_casting_to_right(line, x)
+        I += (x in line)
     end
-    isodd(I)
+    J = 0
+    @inbounds @simd for i in eachindex(poly)
+        line = getline(poly, i)
+        J += ray_casting_to_right(line, x)
+    end
+    ifelse(I === 1 || I === 2, include_bounds, isodd(J))
 end
 
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
