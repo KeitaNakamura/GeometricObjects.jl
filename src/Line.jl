@@ -128,7 +128,7 @@ false
         bx = line[2] - x
     end
     ϵ = muladd(dot(ax,ax), dot(bx,bx), _pow2(dot(ax,bx)))
-    abs2(ϵ) < eps(typeof(ϵ))
+    abs2(ϵ) < eps(typeof(ϵ))^2
 end
 _pow2(x) = x * abs(x)
 
