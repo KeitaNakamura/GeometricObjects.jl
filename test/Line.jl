@@ -43,6 +43,10 @@
     @test distance(line, Vec(0.6,0.2), r) === nothing
     @test GeometricObjects.perpendicularfoot(line, Vec(0.6,0.2)) ≈ [0.6,0.4]
 
+    # norm
+    line = Line(Vec(0.0,0.0), Vec(1.0,1.0))
+    @test (@inferred norm(line)) ≈ norm(line[1] - line[2])
+
     # centered
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
     @test (@inferred GeometricObjects.centered(line))::Line ≈ [[-0.5, 0.0], [0.5, 0.0]]

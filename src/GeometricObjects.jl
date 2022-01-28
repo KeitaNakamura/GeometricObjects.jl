@@ -10,6 +10,9 @@ using Base: @_propagate_inbounds_meta
 
 import Tensorial: rotate, quaternion
 
+import LinearAlgebra: norm
+export norm
+
 export
 # Shape
     Shape,

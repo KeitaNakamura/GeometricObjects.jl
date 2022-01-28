@@ -11,6 +11,7 @@ Line(a::Vec, b::Vec) = Shape(Line, @SVector[a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
 centroid(line::Line) = (line[1] + line[2]) / 2
+norm(line::Line) = norm(line[1] - line[2])
 
 function moment_of_inertia(line::Line{2})
     a, b = coordinates(line)
