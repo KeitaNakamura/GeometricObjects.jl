@@ -11,13 +11,13 @@ end
 @recipe function f(line::Line)
     seriestype := :path
     aspect_ratio := :equal
-    unzip(line)
+    unzip(coordinates(line))
 end
 
 @recipe function f(poly::Polygon)
     seriestype := :shape
     aspect_ratio := :equal
-    unzip(poly)
+    unzip(coordinates(poly))
 end
 
 @recipe function f(sphere::Union{Sphere{2}, Circle{2}})
