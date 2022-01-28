@@ -137,4 +137,10 @@
     line = Line(Vec(2.0,-0.2), Vec(1.8,-0.2));
     @test intersect(poly, line, extended = true) === nothing
     @test intersect(poly, line, extended = false) === nothing
+
+    # moment of inertia
+    poly = Rectangle(Vec(-2.0, -1.0), Vec(1.0, 3.0))
+    @test (@inferred moment_of_inertia(poly)) ≈ @Mat [0 0 0
+                                                      0 0 0
+                                                      0 0 (3^2+4^2) / 12]
 end
