@@ -41,7 +41,7 @@ function centroid(poly::Polygon{2, T}) where {T}
     A = zero(T)
     x_c = zero(T)
     y_c = zero(T)
-    for i in 1:length(poly)
+    @simd for i in 1:length(poly)
         @inbounds begin
             Xᵢ = poly[i]
             Xᵢ₊₁ = poly[i+1]
@@ -59,7 +59,7 @@ end
 
 function area(poly::Polygon{2, T}) where {T}
     A = zero(T)
-    for i in 1:length(poly)
+    @simd for i in 1:length(poly)
         @inbounds begin
             Xᵢ = poly[i]
             Xᵢ₊₁ = poly[i+1]
@@ -75,12 +75,13 @@ end
 
 # https://en.wikipedia.org/wiki/List_of_moments_of_inertia
 function moment_of_inertia(poly::Polygon{2, T}) where {T}
+    xc = centroid(poly)
     num = zero(T)
     den = zero(T)
-    for i in 1:length(poly)
+    @simd for i in 1:length(poly)
         @inbounds begin
-            xᵢ = poly[i]
-            xᵢ₊₁ = poly[i+1]
+            xᵢ = poly[i] - xc
+            xᵢ₊₁ = poly[i+1] - xc
         end
         a = norm(xᵢ₊₁ × xᵢ)
         num += a * ((xᵢ ⋅ xᵢ) + (xᵢ ⋅ xᵢ₊₁) + (xᵢ₊₁ ⋅ xᵢ₊₁))
@@ -88,7 +89,7 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
     end
     symmetric(@Mat([0 0 0
                     0 0 0
-                    0 0 num/den]), :U)
+                    0 0 num/6den]), :U)
 end
 
 @inline function getline(poly::Polygon, i::Int)
