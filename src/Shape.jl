@@ -22,7 +22,7 @@ Base.checkbounds(x::Shape, i...) = checkbounds(coordinates(x), i...)
     @inbounds coordinates(x)[i]
 end
 
-@inline Base.iterate(x::Shape, i = 1) = (i % UInt) - 1 < length(x) ? (@inbounds x[i], i + 1) : nothing
+# @inline Base.iterate(x::Shape, i = 1) = (i % UInt) - 1 < length(x) ? (@inbounds x[i], i + 1) : nothing
 
 moment_of_inertia(x::Shape) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 

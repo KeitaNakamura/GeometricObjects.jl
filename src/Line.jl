@@ -10,10 +10,10 @@ end
 Line(a::Vec, b::Vec) = Shape(Line, @SVector[a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
-centroid(line::Line) = sum(line) / 2
+centroid(line::Line) = (line[1] + line[2]) / 2
 
 function moment_of_inertia(line::Line{2})
-    a, b = line
+    a, b = coordinates(line)
     v = b - a
     l² = v ⋅ v
     symmetric(@Mat([0 0 0
@@ -22,7 +22,7 @@ function moment_of_inertia(line::Line{2})
 end
 
 function moment_of_inertia(line::Line{3, T}) where {T}
-    a, b = line
+    a, b = coordinates(line)
     v = b - a
     l² = v ⋅ v
     I = symmetric(@Mat([l²/12 0     0
@@ -136,7 +136,7 @@ _pow2(x) = x * abs(x)
 function ray_casting_to_right(line::Line{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]
-        a, b = line
+        a, b = coordinates(line)
         a_x, a_y = a[1], a[2]
         b_x, b_y = b[1], b[2]
     end

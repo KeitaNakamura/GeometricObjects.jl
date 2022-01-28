@@ -132,7 +132,7 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     end
     count != 0 && return dist / count
 
-    for xᵢ in poly
+    for xᵢ in coordinates(poly)
         xᵢ in Circle(x, r) && return xᵢ - x
     end
     nothing
