@@ -15,6 +15,8 @@ Base.length(x::Shape) = length(coordinates(x))
 
 Base.eltype(x::Shape{dim, T}) where {dim, T} = Vec{dim, T}
 Base.eachindex(x::Shape) = Base.OneTo(length(x))
+Base.firstindex(x::Shape) = 1
+Base.lastindex(x::Shape) = length(x)
 
 Base.checkbounds(x::Shape, i...) = checkbounds(coordinates(x), i...)
 @inline function Base.getindex(x::Shape, i::Int)

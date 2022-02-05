@@ -25,6 +25,8 @@ Base.length(x::GeometricObject) = length(coordinates(x))
 
 Base.eltype(x::GeometricObject{dim, T}) where {dim, T} = Vec{dim, T}
 Base.eachindex(x::GeometricObject) = Base.OneTo(length(x))
+Base.firstindex(x::GeometricObject) = 1
+Base.lastindex(x::GeometricObject) = length(x)
 
 Base.checkbounds(x::GeometricObject, i...) = checkbounds(coordinates(x), i...)
 @inline function Base.getindex(x::GeometricObject, i::Int)
