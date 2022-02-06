@@ -124,6 +124,10 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     obj
 end
 
+function update!(obj::GeometricObject{dim}, F::AbstractVector, τ::AbstractVector, dt::Real) where {dim}
+    update!(obj, Vec{dim}(F), Vec{3}(τ), dt)
+end
+
 function compute_force_moment(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{Vec{dim, T}}, xᵢ::AbstractArray{Vec{dim, T}}) where {dim, T}
     promote_shape(Fᵢ, xᵢ)
     xc = centroid(obj)
