@@ -5,10 +5,7 @@ mutable struct GeometricObject{dim, T, S <: Shape{dim, T}}
     ω::Vec{3, T}
 end
 
-function GeometricObject(shape::Shape{dim, T}) where {dim, T}
-    m = one(T)
-    v = zero(Vec{dim, T})
-    ω = zero(Vec{3, T})
+function GeometricObject(shape::Shape{dim, T}; m = one(T), v = zero(Vec{dim, T}), ω = zero(Vec{3, T})) where {dim, T}
     GeometricObject(shape, m, v, ω)
 end
 
