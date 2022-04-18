@@ -2,13 +2,11 @@ struct Circle{dim, T} <: Shape{dim, T}
     coordinates::SVector{1, Vec{dim, T}}
     q::Quaternion{T}
     r::T
-    reverse::Bool
 end
 
-Circle(centroid::Vec{dim}, r::Real) where {dim} = Shape(Circle, @SVector[centroid], r, false)
+Circle(centroid::Vec{dim}, r::Real) where {dim} = Shape(Circle, @SVector[centroid], r)
 
-enlarge(circle::Circle, R::Real) = Circle(coordinates(circle), quaternion(circle), R*radius(circle), circle.reverse)
-Base.reverse(circle::Circle) = Circle(coordinates(circle), quaternion(circle), radius(circle), !circle.reverse)
+enlarge(circle::Circle, R::Real) = Circle(coordinates(circle), quaternion(circle), R*radius(circle))
 
 centroid(x::Circle) = @inbounds x[1]
 radius(x::Circle) = x.r
@@ -36,18 +34,14 @@ struct Sphere{dim, T} <: Shape{dim, T}
     coordinates::SVector{1, Vec{dim, T}}
     q::Quaternion{T}
     r::T
-    reverse::Bool
 end
 
-Sphere(centroid::Vec, r::Real) = Shape(Sphere, @SVector[centroid], r, false)
-# cannot construct Sphere from Circle
-Sphere(circle::Circle) = Sphere(coordinates(circle), circle.q, radius(circle), circle.reverse)
+Sphere(centroid::Vec, r::Real) = Shape(Sphere, @SVector[centroid], r)
+Sphere(circle::Circle) = Sphere(coordinates(circle), circle.q, radius(circle))
 
 centroid(x::Sphere) = @inbounds x[1]
 radius(x::Sphere) = x.r
-
-enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radius(sphere), sphere.reverse)
-Base.reverse(sphere::Sphere) = Sphere(coordinates(sphere), sphere.q, radius(sphere), !sphere.reverse)
+enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radius(sphere))
 
 function moment_of_inertia(x::Sphere)
     r = radius(x)
@@ -114,17 +108,9 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}) where {dim}
 end
 
 function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
-    if sphere.reverse
-        v = x - centroid(sphere)
-        norm_v = norm(v)
-        d = radius(sphere) - norm_v
-        d - r ≤ 0 && return d * (v / norm_v)
-        nothing
-    else
-        v = centroid(sphere) - x
-        norm_v = norm(v)
-        d = norm_v - radius(sphere)
-        d - r ≤ 0 && return d * (v / norm_v)
-        nothing
-    end
+    v = centroid(sphere) - x
+    norm_v = norm(v)
+    d = norm_v - radius(sphere)
+    d ≤ r && return d * (v / norm_v)
+    nothing
 end
