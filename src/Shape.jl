@@ -47,10 +47,6 @@ function enlarge(shape::Shape, R::Real)
     )
 end
 
-function Base.reverse(shape::Shape)
-    copy_shape(shape, reverse(shape.coordinates), quaternion(shape))
-end
-
 function translate(shape::Shape, u::Vec)
     copy_shape(shape, coordinates(shape) .+ u, quaternion(shape))
 end
