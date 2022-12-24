@@ -1,4 +1,4 @@
-struct Polygon{dim, T, L} <: Shape{dim, T}
+struct Polygon{dim, T, L} <: Geometry{dim, T}
     coordinates::SVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
@@ -10,7 +10,7 @@ _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,
 
 function Polygon(coordinates::Vec{2}...; x = nothing, y = nothing, z = nothing)
     coords = _projection.(coordinates, x, y, z)
-    Shape(Polygon, SVector(coords))
+    Geometry(Polygon, SVector(coords))
 end
 
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}

@@ -1,9 +1,9 @@
-struct Polyline{dim, T, L} <: Shape{dim, T}
+struct Polyline{dim, T, L} <: Geometry{dim, T}
     coordinates::SVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
 
-Polyline(coordinates::Vec{2}...) = Shape(Polyline, SVector(coordinates))
+Polyline(coordinates::Vec{2}...) = Geometry(Polyline, SVector(coordinates))
 
 @inline function getline(poly::Polyline, i::Int)
     @boundscheck @assert 1 ≤ i ≤ length(poly)-1

@@ -1,22 +1,20 @@
-mutable struct GeometricObject{dim, T, S <: Shape{dim, T}}
-    shape::S
+mutable struct GeometricObject{dim, T, S <: Geometry{dim, T}}
+    geometry::S
     m::T
     v::Vec{dim, T}
     ω::Vec{3, T}
 end
 
-function GeometricObject(shape::Shape{dim, T}; m = one(T), v = zero(Vec{dim, T}), ω = zero(Vec{3, T})) where {dim, T}
-    GeometricObject(shape, m, v, ω)
+function GeometricObject(geometry::Geometry{dim, T}; m = one(T), v = zero(Vec{dim, T}), ω = zero(Vec{3, T})) where {dim, T}
+    GeometricObject(geometry, m, v, ω)
 end
 
-coordinates(x::GeometricObject) = coordinates(x.shape)
-quaternion(x::GeometricObject) = quaternion(x.shape)
-attitude(x::GeometricObject) = attitude(x.shape)
+coordinates(x::GeometricObject) = coordinates(x.geometry)
+quaternion(x::GeometricObject) = quaternion(x.geometry)
+attitude(x::GeometricObject) = attitude(x.geometry)
 
-@inline Base.getindex(x::GeometricObject) = x.shape
-@inline Base.setindex!(x::GeometricObject, shape) = x.shape = shape
-
-moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(x.shape)
+@inline Base.getindex(x::GeometricObject) = x.geometry
+@inline Base.setindex!(x::GeometricObject, geometry) = x.geometry = geometry
 
 function velocityat(obj::GeometricObject{3}, x::Vec{3})
     r = x - centroid(obj)
@@ -44,12 +42,12 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{2}) wh
 end
 
 function translate!(obj::GeometricObject, u::Vec)
-    obj.shape = translate(obj.shape, u)
+    obj[] = translate(obj[], u)
     obj
 end
 
 function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
-    obj.shape = rotate(obj.shape, θ)
+    obj[] = rotate(obj[], θ)
     obj
 end
 
@@ -75,7 +73,7 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     m = obj.m
     v = obj.v
     ω = obj.ω
-    I = moment_of_inertia(obj)
+    I = moment_of_inertia(obj[])
     I⁻¹ = inv_moment_of_inertia(I, Val(3))
 
     # update two velocities first
@@ -91,7 +89,7 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
     m = obj.m
     v = obj.v
     ω = obj.ω
-    I = moment_of_inertia(obj)
+    I = moment_of_inertia(obj[])
 
     # update two velocities first
     obj.v = v + F / m * dt
@@ -110,12 +108,12 @@ function compute_force_moment(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{
 end
 
 function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec}, dt::Real; body_force_per_unit_mass::Vec = zero(Vec{dim, T})) where {dim, T}
-    F, M = compute_force_moment(obj, Fᵢ, xᵢ)
+    F, M = compute_force_moment(obj[], Fᵢ, xᵢ)
     update!(obj, F + obj.m*body_force_per_unit_mass, M, dt)
     obj
 end
 
-Base.in(x::Vec, obj::GeometricObject) = x in obj.shape
+Base.in(x::Vec, obj::GeometricObject) = x in obj[]
 function Base.in(obj::GeometricObject, x::Vec)
     throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
 end
@@ -129,7 +127,7 @@ end
 function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
     print(io, typeof(x), ":\n")
     buf = IOBuffer()
-    show(buf, MIME("text/plain"), x.shape)
+    show(buf, MIME("text/plain"), x[])
     strings = map(line -> "  " * line, eachline(IOBuffer(take!(buf))))
     print(io, join(strings, "\n"), "\n")
     print(io, "  Mass: ", x.m, "\n")

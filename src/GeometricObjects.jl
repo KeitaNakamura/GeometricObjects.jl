@@ -14,8 +14,8 @@ import LinearAlgebra: norm
 export norm
 
 export
-# Shape
-    Shape,
+# Geometry
+    Geometry,
     centroid,
     area,
     distance,
@@ -44,7 +44,7 @@ export
 # VTK
     vtk_grid
 
-include("Shape.jl")
+include("Geometry.jl")
 include("Line.jl")
 include("Polygon.jl")
 include("Polyline.jl")

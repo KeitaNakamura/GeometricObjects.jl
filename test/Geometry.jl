@@ -1,4 +1,4 @@
-@testset "Shape" begin
+@testset "Geometry" begin
     @testset "misc" begin
         x = Line(Vec(0.0,0.0) => Vec(1.0,0.0))
         @test eachindex(x) == Base.OneTo(2)

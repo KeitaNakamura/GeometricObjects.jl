@@ -2,12 +2,12 @@
     Line(a::Vec, b::Vec)
     Line(a::Vec => b::Vec)
 """
-struct Line{dim, T} <: Shape{dim, T}
+struct Line{dim, T} <: Geometry{dim, T}
     coordinates::SVector{2, Vec{dim, T}}
     q::Quaternion{T}
 end
 
-Line(a::Vec, b::Vec) = Shape(Line, @SVector[a, b])
+Line(a::Vec, b::Vec) = Geometry(Line, @SVector[a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
 centroid(line::Line) = (line[1] + line[2]) / 2
