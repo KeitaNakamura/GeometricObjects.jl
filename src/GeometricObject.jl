@@ -13,26 +13,6 @@ coordinates(x::GeometricObject) = coordinates(x.shape)
 quaternion(x::GeometricObject) = quaternion(x.shape)
 attitude(x::GeometricObject) = attitude(x.shape)
 
-for f in (:centroid, :centered, :area, :translate, :rotate, :distance) # call the same function of `Shape`
-    @eval $f(x::GeometricObject, args...; kwargs...) = $f(x.shape, args...; kwargs...)
-end
-
-Base.size(x::GeometricObject) = size(coordinates(x))
-Base.length(x::GeometricObject) = length(coordinates(x))
-
-Base.eltype(x::GeometricObject{dim, T}) where {dim, T} = Vec{dim, T}
-Base.eachindex(x::GeometricObject) = Base.OneTo(length(x))
-Base.firstindex(x::GeometricObject) = 1
-Base.lastindex(x::GeometricObject) = length(x)
-
-Base.checkbounds(x::GeometricObject, i...) = checkbounds(coordinates(x), i...)
-@inline function Base.getindex(x::GeometricObject, i::Int)
-    @boundscheck checkbounds(x, i)
-    @inbounds coordinates(x)[i]
-end
-
-# @inline Base.iterate(x::GeometricObject, i = 1) = (i % UInt) - 1 < length(x) ? (@inbounds x[i], i + 1) : nothing
-
 @inline Base.getindex(x::GeometricObject) = x.shape
 @inline Base.setindex!(x::GeometricObject, shape) = x.shape = shape
 
@@ -123,7 +103,7 @@ end
 
 function compute_force_moment(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{Vec{dim, T}}, xᵢ::AbstractArray{Vec{dim, T}}) where {dim, T}
     promote_shape(Fᵢ, xᵢ)
-    xc = centroid(obj)
+    xc = centroid(obj[])
     F = sum(Fᵢ)
     M = sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ); init = zero(Vec{3, T}))
     F, M
