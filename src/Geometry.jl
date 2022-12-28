@@ -5,27 +5,12 @@ function Geometry(::Type{S}, coordinates::AbstractVector{<: Vec{dim, T}}, args..
     S(coordinates, q, args...)
 end
 
+num_coordinates(x::Geometry) = length(coordinates(x))
 coordinates(x::Geometry) = x.coordinates
+coordinates(x::Geometry, i::Int) = (@_propagate_inbounds_meta; coordinates(x)[i])
 quaternion(x::Geometry) = x.q
 attitude(x::Geometry{2, T}) where {T} = rotate(Vec{2,T}(1,0), quaternion(x))
 attitude(x::Geometry{3, T}) where {T} = rotate(Vec{3,T}(1,0,0), quaternion(x))
-
-Base.size(x::Geometry) = size(coordinates(x))
-Base.length(x::Geometry) = length(coordinates(x))
-
-Base.eltype(x::Geometry{dim, T}) where {dim, T} = Vec{dim, T}
-Base.eachindex(x::Geometry) = Base.OneTo(length(x))
-Base.firstindex(x::Geometry) = 1
-Base.lastindex(x::Geometry) = length(x)
-
-Base.checkbounds(x::Geometry, i...) = checkbounds(coordinates(x), i...)
-@inline function Base.getindex(x::Geometry, i::Int)
-    @boundscheck checkbounds(x, i)
-    @inbounds coordinates(x)[i]
-end
-
-# @inline Base.iterate(x::Geometry, i = 1) = (i % UInt) - 1 < length(x) ? (@inbounds x[i], i + 1) : nothing
-
 moment_of_inertia(x::Geometry) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
 @generated function copy_geometry(geometry::Geometry, coordinates::SVector, q::Quaternion)

@@ -6,14 +6,15 @@ end
 Polyline(coordinates::Vec{2}...) = Geometry(Polyline, SVector(coordinates))
 
 @inline function getline(poly::Polyline, i::Int)
-    @boundscheck @assert 1 ≤ i ≤ length(poly)-1
-    @inbounds Line(poly[i], poly[i+1])
+    C = coordinates(poly)
+    @boundscheck @assert 1 ≤ i ≤ length(C)-1
+    @inbounds Line(C[i], C[i+1])
 end
 
 function distance(poly::Polyline{dim, T}, x::Vec{dim, T}, r::T; include_tips::Bool = true) where {dim, T}
     dist = zero(Vec{dim, T})
     count = 0
-    @inbounds for i in 1:length(poly)-1
+    @inbounds for i in 1:num_coordinates(poly)-1
         line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
@@ -23,11 +24,11 @@ function distance(poly::Polyline{dim, T}, x::Vec{dim, T}, r::T; include_tips::Bo
     end
     count != 0 && return dist / count
 
-    @inbounds for i in 1:length(poly)
+    @inbounds for i in 1:num_coordinates(poly)
         if !include_tips
-            (i == 1 || i == length(poly)) && continue
+            (i == 1 || i == num_coordinates(poly)) && continue
         end
-        xᵢ = poly[i]
+        xᵢ = coordinates(poly, i)
         xᵢ in Circle(x, r) && return xᵢ - x
     end
     nothing
@@ -43,10 +44,10 @@ Return `nothing` if not found.
 function Base.intersect(poly::Polyline{dim, T}, line::Line; extended::Bool = false) where {dim, T}
     output = zero(Vec{dim, T})
     dist = T(Inf)
-    @inbounds for i in 1:length(poly)-1
+    @inbounds for i in 1:num_coordinates(poly)-1
         p = intersect(getline(poly, i), line; extended = (false, extended))
         p === nothing && continue
-        v = line[1] - p
+        v = coordinates(line, 1) - p
         vv = v ⋅ v
         if vv < dist
             output = p

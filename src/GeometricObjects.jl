@@ -16,6 +16,7 @@ export norm
 export
 # Geometry
     Geometry,
+    geometry,
     centroid,
     area,
     distance,

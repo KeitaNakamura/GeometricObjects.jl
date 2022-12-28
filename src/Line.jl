@@ -10,8 +10,8 @@ end
 Line(a::Vec, b::Vec) = Geometry(Line, @SVector[a, b])
 Line(pair::Pair) = Line(pair.first, pair.second)
 
-centroid(line::Line) = (line[1] + line[2]) / 2
-norm(line::Line) = norm(line[1] - line[2])
+centroid(line::Line) = mean(coordinates(line))
+norm(line::Line) = (c=coordinates(line); norm(c[1] - c[2]))
 
 function moment_of_inertia(line::Line{2})
     a, b = coordinates(line)
@@ -35,9 +35,10 @@ function moment_of_inertia(line::Line{3, T}) where {T}
 end
 
 @inline function _distance(line::Line, x::Vec)
+    c1, c2 = coordinates(line)
     @inbounds begin
-        v = line[2] - line[1]
-        a_to_x = x - line[1]
+        v = c2 - c1
+        a_to_x = x - c1
     end
     scale = (a_to_x ⋅ v) / (v ⋅ v)
     distance = scale*v - a_to_x
@@ -97,8 +98,9 @@ function perpendicularfoot(line::Line, x::Vec)
 end
 
 function normalunit(line::Line{2})
+    c1, c2 = coordinates(line)
     @inbounds begin
-        v = line[2] - line[1]
+        v = c2 - c1
         n = Vec(v[2], -v[1])
     end
     normalize(n)
@@ -124,9 +126,10 @@ false
 ```
 """
 @inline function Base.in(x::Vec, line::Line)
+    c1, c2 = coordinates(line)
     @inbounds begin
-        ax = line[1] - x
-        bx = line[2] - x
+        ax = c1 - x
+        bx = c2 - x
     end
     ϵ = muladd(dot(ax,ax), dot(bx,bx), _pow2(dot(ax,bx)))
     abs2(ϵ) < eps(typeof(ϵ))^2
@@ -155,10 +158,10 @@ Find intersection point from two lines.
 Return `nothing` if not found.
 """
 function Base.intersect(line1::Line{2}, line2::Line{2}; extended::Tuple{Bool, Bool} = (false, false))
-    x1, y1 = line1[1]
-    x2, y2 = line1[2]
-    x3, y3 = line2[1]
-    x4, y4 = line2[2]
+    x1, y1 = coordinates(line1, 1)
+    x2, y2 = coordinates(line1, 2)
+    x3, y3 = coordinates(line2, 1)
+    x4, y4 = coordinates(line2, 2)
     D = (x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4)
     abs(D) < sqrt(eps(typeof(D))) && return nothing
     x1y2_y1x2 = x1*y2 - y1*x2
@@ -170,16 +173,18 @@ function Base.intersect(line1::Line{2}, line2::Line{2}; extended::Tuple{Bool, Bo
 end
 
 function Base.intersect(line1::Line{3}, line2::Line{3}; extended::Tuple{Bool, Bool} = (false, false))
-    n1 = normalize(line1[2] - line1[1])
-    n2 = normalize(line2[2] - line2[1])
-    v = line2[1] - line1[1]
+    c1 = coordinates(line1)
+    c2 = coordinates(line2)
+    n1 = normalize(c1[2] - c1[1])
+    n2 = normalize(c2[2] - c2[1])
+    v = c2[1] - c1[1]
     n1_n2 = n1 ⋅ n2
     n1_v  = n1 ⋅ v
     n2_v  = n2 ⋅ v
     d1 = (n1_v - (n1_n2)*(n2_v)) / (1 - n1_n2 * n1_n2)
     d2 = ((n1_n2)*(n1_v) - n2_v) / (1 - n1_n2 * n1_n2)
-    p1 = line1[1] + d1 * n1
-    p2 = line2[1] + d2 * n2
+    p1 = c1[1] + d1 * n1
+    p2 = c2[1] + d2 * n2
     p1 ≈ p2 || return nothing
     ifelse((extended[1] || p1 in line1) && (extended[2] || p1 in line2), p1, nothing)
 end

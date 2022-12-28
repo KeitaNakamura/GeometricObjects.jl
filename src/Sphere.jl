@@ -8,7 +8,7 @@ Circle(centroid::Vec{dim}, r::Real) where {dim} = Geometry(Circle, @SVector[cent
 
 enlarge(circle::Circle, R::Real) = Circle(coordinates(circle), quaternion(circle), R*radius(circle))
 
-centroid(x::Circle) = @inbounds x[1]
+centroid(x::Circle) = @inbounds only(coordinates(x))
 radius(x::Circle) = x.r
 
 function area(x::Circle{2})
@@ -39,7 +39,7 @@ end
 Sphere(centroid::Vec, r::Real) = Geometry(Sphere, @SVector[centroid], r)
 Sphere(circle::Circle) = Sphere(coordinates(circle), circle.q, radius(circle))
 
-centroid(x::Sphere) = @inbounds x[1]
+centroid(x::Sphere) = @inbounds only(coordinates(x))
 radius(x::Sphere) = x.r
 enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radius(sphere))
 

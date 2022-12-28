@@ -29,4 +29,4 @@ function WriteVTK.vtk_grid(vtk::AbstractString, sphere::Sphere{2})
     vtk_grid(vtk, Circle(centroid(sphere), radius(sphere)))
 end
 
-WriteVTK.vtk_grid(vtk::AbstractString, obj::GeometricObject) = vtk_grid(vtk, obj[])
+WriteVTK.vtk_grid(vtk::AbstractString, obj::GeometricObject) = vtk_grid(vtk, geometry(obj))
