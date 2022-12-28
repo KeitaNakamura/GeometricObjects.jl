@@ -9,8 +9,11 @@ num_coordinates(x::Geometry) = length(coordinates(x))
 coordinates(x::Geometry) = x.coordinates
 coordinates(x::Geometry, i::Int) = (@_propagate_inbounds_meta; coordinates(x)[i])
 quaternion(x::Geometry) = x.q
-attitude(x::Geometry{2, T}) where {T} = rotate(Vec{2,T}(1,0), quaternion(x))
-attitude(x::Geometry{3, T}) where {T} = rotate(Vec{3,T}(1,0,0), quaternion(x))
+function attitude(x::Geometry{dim, T}) where {dim, T}
+    q = quaternion(x)
+    v = rotate(Vec{3,T}(1,0,0), q)
+    @Tensor v[1:dim]
+end
 moment_of_inertia(x::Geometry) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
 @generated function copy_geometry(geometry::Geometry, coordinates::SVector, q::Quaternion)
