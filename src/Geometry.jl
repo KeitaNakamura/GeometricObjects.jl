@@ -55,10 +55,6 @@ for IterType in (:Tuple, :AbstractArray)
     end
 end
 
-# isapprox
-Base.isapprox(x::Geometry, y::AbstractVector; kwargs...) = isapprox(coordinates(x), y; kwargs...)
-Base.isapprox(x::AbstractVector, y::Geometry; kwargs...) = isapprox(x, coordinates(y); kwargs...)
-
 function Base.show(io::IO, mime::MIME"text/plain", x::Geometry)
     print(io, typeof(x), ":\n")
     print(io, "  Coordinates: [", join(coordinates(x), ", "), "]\n")

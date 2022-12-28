@@ -9,7 +9,7 @@
     @test R * radius(sphere) == radius(sphere′)
 
     # centered
-    @test (@inferred GeometricObjects.centered(sphere))::Sphere ≈ [[0.0, 0.0, 0.0]]
+    @test (@inferred GeometricObjects.centered(sphere))::Sphere |> coordinates ≈ [[0.0, 0.0, 0.0]]
 
     # distance
     sphere = Sphere(Vec(3.0,3.0,3.0), 2√3)
@@ -31,7 +31,7 @@ end
     @test R * radius(circle) == radius(circle′)
 
     # centered
-    @test (@inferred GeometricObjects.centered(circle))::Circle ≈ [[0.0, 0.0]]
+    @test (@inferred GeometricObjects.centered(circle))::Circle |> coordinates ≈ [[0.0, 0.0]]
 
     # distance
     sphere = Circle(Vec(3.0,3.0), 2√2)

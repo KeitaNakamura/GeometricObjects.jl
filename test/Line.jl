@@ -51,11 +51,11 @@
 
     # centered
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
-    @test (@inferred GeometricObjects.centered(line))::Line ≈ [[-0.5, 0.0], [0.5, 0.0]]
+    @test (@inferred GeometricObjects.centered(line))::Line |> coordinates ≈ [[-0.5, 0.0], [0.5, 0.0]]
 
     # enlarge
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
-    @test (@inferred enlarge(line, 1.1))::Line ≈ [[-0.05, 0.0], [1.05, 0.0]]
+    @test (@inferred enlarge(line, 1.1))::Line |> coordinates ≈ [[-0.05, 0.0], [1.05, 0.0]]
 
     # intersect
     ## 2D
