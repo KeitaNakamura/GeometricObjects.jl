@@ -37,7 +37,7 @@ function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
     obj
 end
 
-function update!(obj::GeometricObject{3}, dt::Real)
+function update_geometry!(obj::GeometricObject{3}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
     dθ = obj.ω * dt
@@ -46,7 +46,7 @@ function update!(obj::GeometricObject{3}, dt::Real)
     obj
 end
 
-function update!(obj::GeometricObject{2}, dt::Real)
+function update_geometry!(obj::GeometricObject{2}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
     dθ = obj.ω * dt
@@ -55,7 +55,8 @@ function update!(obj::GeometricObject{2}, dt::Real)
     obj
 end
 
-function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
+# 3D
+function apply_force!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     m = obj.m
     v = obj.v
     ω = obj.ω
@@ -66,12 +67,12 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     obj.v = v + F / m * dt
     obj.ω = ω + I⁻¹ ⋅ (τ - ω × (I ⋅ ω)) * dt
 
-    update!(obj, dt)
+    update_geometry!(obj, dt)
     obj
 end
 
 # 2D
-function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Real, dt::Real)
+function apply_force!(obj::GeometricObject{2}, F::Vec{2}, τ::Real, dt::Real)
     m = obj.m
     v = obj.v
     ω = obj.ω[3]
@@ -81,7 +82,7 @@ function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Real, dt::Real)
     obj.v = v + F / m * dt
     obj.ω = Vec(0, 0, ω + inv(I)*τ*dt)
 
-    update!(obj, dt)
+    update_geometry!(obj, dt)
     obj
 end
 

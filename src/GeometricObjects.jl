@@ -39,6 +39,8 @@ export
     radius,
 # GeometricObject,
     GeometricObject,
+    update_geometry!,
+    apply_force!,
     translate!,
     rotate!,
 # VTK
