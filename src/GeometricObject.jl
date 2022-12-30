@@ -37,6 +37,14 @@ function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
     obj
 end
 
+"""
+    update_geometry!(::GeometricObject, dt)
+
+Update geometry of object by time increment `dt`.
+Current linear and angular velocities of object are used in the calculation.
+"""
+function update_geometry! end
+
 function update_geometry!(obj::GeometricObject{3}, dt::Real)
     # v and ω need to be updated in advance
     dx = obj.v * dt
