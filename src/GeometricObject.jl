@@ -15,19 +15,6 @@ coordinates(x::GeometricObject, i::Int) = (@_propagate_inbounds_meta; coordinate
 quaternion(x::GeometricObject) = quaternion(geometry(x))
 attitude(x::GeometricObject) = attitude(geometry(x))
 
-function velocityat(obj::GeometricObject{3}, x::Vec{3})
-    r = x - centroid(obj)
-    obj.v + obj.ω × r
-end
-
-function velocityat(obj::GeometricObject{2}, x::Vec{2})
-    r = x - centroid(obj)
-    @inbounds begin
-        v3 = obj.ω × Vec(r[1], r[2], 0)
-        obj.v + Vec(v3[1], v3[2])
-    end
-end
-
 function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}, ::Val{3}) where {T}
     V, P = eigen(I)
     A⁻¹ = SymmetricSecondOrderTensor{3}((i,j) -> @inbounds i == j ? (abs(V[i]) < sqrt(eps(T)) ? V[i] : inv(V[i])) : zero(T))
@@ -75,7 +62,7 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     I = moment_of_inertia(geometry(obj))
     I⁻¹ = inv_moment_of_inertia(I, Val(3))
 
-    # update two velocities first
+    # update velocities first
     obj.v = v + F / m * dt
     obj.ω = ω + I⁻¹ ⋅ (τ - ω × (I ⋅ ω)) * dt
 
@@ -84,38 +71,21 @@ function update!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
 end
 
 # 2D
-function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Vec{3}, dt::Real)
+function update!(obj::GeometricObject{2}, F::Vec{2}, τ::Real, dt::Real)
     m = obj.m
     v = obj.v
-    ω = obj.ω
-    I = moment_of_inertia(geometry(obj))
+    ω = obj.ω[3]
+    I = moment_of_inertia(geometry(obj))[3,3]
 
-    # update two velocities first
+    # update velocities first
     obj.v = v + F / m * dt
-    @inbounds obj.ω = Vec(0, 0, ω[3] + inv(I[3,3]) * τ[3] * dt)
+    obj.ω = Vec(0, 0, ω + inv(I)*τ*dt)
 
     update!(obj, dt)
     obj
 end
 
-function compute_force_moment(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{Vec{dim, T}}, xᵢ::AbstractArray{Vec{dim, T}}) where {dim, T}
-    promote_shape(Fᵢ, xᵢ)
-    xc = centroid(geometry(obj))
-    F = sum(Fᵢ)
-    M = sum((x - xc) × F for (F, x) in zip(Fᵢ, xᵢ); init = zero(Vec{3, T}))
-    F, M
-end
-
-function update!(obj::GeometricObject{dim, T}, Fᵢ::AbstractArray{<: Vec}, xᵢ::AbstractArray{<: Vec}, dt::Real; body_force_per_unit_mass::Vec = zero(Vec{dim, T})) where {dim, T}
-    F, M = compute_force_moment(geometry(obj), Fᵢ, xᵢ)
-    update!(obj, F + obj.m*body_force_per_unit_mass, M, dt)
-    obj
-end
-
-Base.in(x::Vec, obj::GeometricObject) = x in coordinates(obj)
-function Base.in(obj::GeometricObject, x::Vec)
-    throw(ArgumentError("`in(obj, x)` is invalid, use `in(x, obj)` instead"))
-end
+Base.in(x::Vec, obj::GeometricObject) = x in geometry(obj)
 
 for IterType in (:Tuple, :AbstractArray)
     @eval function Base.findall(pred::Base.Fix2{typeof(in), <: GeometricObject}, iter::$IterType)

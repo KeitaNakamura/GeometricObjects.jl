@@ -39,7 +39,6 @@ export
     radius,
 # GeometricObject,
     GeometricObject,
-    velocityat,
     translate!,
     rotate!,
 # VTK
