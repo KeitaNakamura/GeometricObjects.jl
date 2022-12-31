@@ -15,8 +15,9 @@
     b = Vec(0.5,0.4)
     r = 0.3
     line = @inferred Line(a, b)
+    c = coordinates(line)
     @test (@inferred Line(a => b)) == line
-    @test centroid(line) == (line[1] + line[2]) / 2
+    @test centroid(line) == (c[1] + c[2]) / 2
     @test GeometricObjects.normalunit(line) ≈ [0.0,-1.0]
     # 1
     @test distance(line, Vec(0.2,0.6)) ≈ [0.0,-0.2]
@@ -45,15 +46,16 @@
 
     # norm
     line = Line(Vec(0.0,0.0), Vec(1.0,1.0))
-    @test (@inferred norm(line)) ≈ norm(line[1] - line[2])
+    c = coordinates(line)
+    @test (@inferred norm(line)) ≈ norm(c[1] - c[2])
 
     # centered
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
-    @test (@inferred GeometricObjects.centered(line))::Line ≈ [[-0.5, 0.0], [0.5, 0.0]]
+    @test (@inferred GeometricObjects.centered(line))::Line |> coordinates ≈ [[-0.5, 0.0], [0.5, 0.0]]
 
     # enlarge
     line = Line(Vec(0.0, 0.0), (Vec(1.0, 0.0)))
-    @test (@inferred enlarge(line, 1.1))::Line ≈ [[-0.05, 0.0], [1.05, 0.0]]
+    @test (@inferred enlarge(line, 1.1))::Line |> coordinates ≈ [[-0.05, 0.0], [1.05, 0.0]]
 
     # intersect
     ## 2D

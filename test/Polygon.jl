@@ -58,15 +58,15 @@
 
     # rotate
     poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))
-    poly = rotate(poly, π/4)
+    poly = @inferred rotate(poly, π/4)
     @test centroid(poly) ≈ [0.5,0.5]
-    @test poly ≈ [[0.5, 0.5-1/√2], [0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5]]
-    poly = rotate(poly, π/2)
+    @test coordinates(poly) ≈ [[0.5, 0.5-1/√2], [0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5]]
+    poly = @inferred rotate(poly, π/2)
     @test centroid(poly) ≈ [0.5,0.5]
-    @test poly ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
+    @test coordinates(poly) ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
     # translate
     poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))
-    @test translate(poly, Vec(0.4, 0.3)) ≈ coordinates(poly) .+ Vec(0.4, 0.3)
+    @test coordinates(@inferred translate(poly, Vec(0.4, 0.3))) ≈ coordinates(poly) .+ Vec(0.4, 0.3)
 
     # distance
     poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (10,10), (0,10)]...)
@@ -119,15 +119,15 @@
 
     # area
     poly = Polygon(Vec{2,Float64}[(0,0), (10,0), (8,5), (3,5)]...)
-    @test area(poly) ≈ (10 + 5) * 5 / 2
+    @test (@inferred area(poly))::Float64 ≈ (10 + 5) * 5 / 2
 
     # enlarge
     poly = Polygon(Vec{2,Float64}[(0,0), (1,0), (1,1), (0,1)]...)
-    @test (@inferred enlarge(poly, 1.1))::Polygon ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
+    @test (@inferred enlarge(poly, 1.1))::Polygon |> coordinates ≈ [[-0.05, -0.05], [1.05, -0.05], [1.05, 1.05], [-0.05, 1.05]]
 
     # centered
     poly = Polygon(Vec{2,Float64}[(0,0), (1,0), (1,1), (0,1)]...)
-    @test (@inferred GeometricObjects.centered(poly))::Polygon ≈ [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]
+    @test (@inferred GeometricObjects.centered(poly))::Polygon |> coordinates ≈ [[-0.5, -0.5], [0.5, -0.5], [0.5, 0.5], [-0.5, 0.5]]
 
     # intersect
     poly = Polygon(Vec(0.0,1.0), Vec(1.0,0.0), Vec(1.0,1.0))

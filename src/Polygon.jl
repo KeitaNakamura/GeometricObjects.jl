@@ -1,4 +1,4 @@
-struct Polygon{dim, T, L} <: Shape{dim, T}
+struct Polygon{dim, T, L} <: Geometry{dim, T}
     coordinates::SVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
@@ -10,7 +10,7 @@ _projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,
 
 function Polygon(coordinates::Vec{2}...; x = nothing, y = nothing, z = nothing)
     coords = _projection.(coordinates, x, y, z)
-    Shape(Polygon, SVector(coords))
+    Geometry(Polygon, SVector(coords))
 end
 
 function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}
@@ -21,30 +21,18 @@ function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = 
     Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1); x, y, z)
 end
 
-# handle end+1 index
-@inline function Base.getindex(poly::Polygon, i::Int)
-    if i == length(poly) + 1
-        @inbounds coordinates(poly)[1]
-    else
-        @boundscheck checkbounds(poly, i)
-        @inbounds coordinates(poly)[i]
-    end
-end
-
-@inline function Base.getindex(poly::Polygon, I::AbstractUnitRange{Int})
-    @_propagate_inbounds_meta
-    Polyline(getindex.(Ref(poly), I), poly.q)
-end
+@inline repeated(x::AbstractVector, i::Int) = @inbounds x[(i-1) % length(x) + 1]
 
 # https://en.wikipedia.org/wiki/Centroid
 function centroid(poly::Polygon{2, T}) where {T}
     A = zero(T)
     x_c = zero(T)
     y_c = zero(T)
-    @simd for i in 1:length(poly)
+    C = coordinates(poly)
+    @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            Xᵢ = poly[i]
-            Xᵢ₊₁ = poly[i+1]
+            Xᵢ = repeated(C, i)
+            Xᵢ₊₁ = repeated(C, i+1)
             xᵢ, yᵢ = Xᵢ[1], Xᵢ[2]
             xᵢ₊₁, yᵢ₊₁ = Xᵢ₊₁[1], Xᵢ₊₁[2]
         end
@@ -59,10 +47,11 @@ end
 
 function area(poly::Polygon{2, T}) where {T}
     A = zero(T)
-    @simd for i in 1:length(poly)
+    C = coordinates(poly)
+    @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            Xᵢ = poly[i]
-            Xᵢ₊₁ = poly[i+1]
+            Xᵢ = repeated(C, i)
+            Xᵢ₊₁ = repeated(C, i+1)
             xᵢ, yᵢ = Xᵢ[1], Xᵢ[2]
             xᵢ₊₁, yᵢ₊₁ = Xᵢ₊₁[1], Xᵢ₊₁[2]
         end
@@ -78,10 +67,11 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
     xc = centroid(poly)
     num = zero(T)
     den = zero(T)
-    @simd for i in 1:length(poly)
+    C = coordinates(poly)
+    @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            xᵢ = poly[i] - xc
-            xᵢ₊₁ = poly[i+1] - xc
+            xᵢ = repeated(C, i) - xc
+            xᵢ₊₁ = repeated(C, i+1) - xc
         end
         a = norm(xᵢ₊₁ × xᵢ)
         num += a * ((xᵢ ⋅ xᵢ) + (xᵢ ⋅ xᵢ₊₁) + (xᵢ₊₁ ⋅ xᵢ₊₁))
@@ -93,12 +83,14 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
 end
 
 @inline function getline(poly::Polygon, i::Int)
-    @boundscheck checkbounds(poly, i)
-    @inbounds Line(poly[i], poly[i+1]) # getindex at `length+1` is supported in `getindex`
+    C = coordinates(poly)
+    i == length(C) && return @inbounds Line(C[i], C[1])
+    @boundscheck checkbounds(C, i)
+    @inbounds Line(C[i], C[i+1])
 end
 
 function Base.eachline(poly::Polygon)
-    (@inbounds(getline(poly, i)) for i in eachindex(poly))
+    (@inbounds(getline(poly, i)) for i in 1:num_coordinates(poly))
 end
 
 """
@@ -108,12 +100,12 @@ Check if `x` is `in` a polygon.
 """
 @inline function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
-    @inbounds @simd for i in eachindex(poly)
+    @inbounds @simd for i in 1:num_coordinates(poly)
         line = getline(poly, i)
         I += (x in line)
     end
     J = 0
-    @inbounds @simd for i in eachindex(poly)
+    @inbounds @simd for i in 1:num_coordinates(poly)
         line = getline(poly, i)
         J += ray_casting_to_right(line, x)
     end
@@ -123,7 +115,7 @@ end
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
     dist = zero(Vec{2, T})
     count = 0
-    @inbounds for i in eachindex(poly)
+    @inbounds for i in 1:num_coordinates(poly)
         line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
@@ -140,11 +132,11 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
 end
 
 function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::AbstractVector{U}) where {T, U}
-    @assert length(poly) == length(line_values)
+    @assert num_coordinates(poly) == length(line_values)
     dist = zero(Vec{2, T})
     value = zero(U)
     count = 0
-    @inbounds for i in eachindex(poly)
+    @inbounds for i in 1:num_coordinates(poly)
         line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
@@ -155,8 +147,8 @@ function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::Abstract
     end
     count != 0 && return (dist/count, value/count)
 
-    @inbounds for i in eachindex(poly)
-        xᵢ = poly[i]
+    @inbounds for i in 1:num_coordinates(poly)
+        xᵢ = coordinates(poly, i)
         if xᵢ in Circle(x, r)
             if i == 1
                 return (xᵢ - x), (line_values[end] + line_values[i]) / 2
@@ -177,10 +169,10 @@ Return `nothing` if not found.
 function Base.intersect(poly::Polygon{dim, T}, line::Line; extended::Bool = false) where {dim, T}
     output = zero(Vec{dim, T})
     dist = T(Inf)
-    @inbounds for i in eachindex(poly)
+    @inbounds for i in 1:num_coordinates(poly)
         p = intersect(getline(poly, i), line; extended = (false, extended))
         p === nothing && continue
-        v = line[1] - p
+        v = coordinates(line, 1) - p
         vv = v ⋅ v
         if vv < dist
             output = p
