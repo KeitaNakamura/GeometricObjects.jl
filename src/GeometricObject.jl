@@ -59,8 +59,9 @@ function update_geometry!(obj::GeometricObject, dt::Real)
     obj
 end
 
-# 3D
-function apply_force!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
+_cross(x, y) = cross(x, y)
+_cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D case
+function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}, Real}, dt::Real) where {dim}
     m = obj.m
     v = obj.v
     ω = obj.ω
@@ -68,24 +69,8 @@ function apply_force!(obj::GeometricObject{3}, F::Vec{3}, τ::Vec{3}, dt::Real)
     I⁻¹ = inv_moment_of_inertia(I)
 
     # update velocities first
-    obj.v = v + F/m*dt
-    obj.ω = ω + I⁻¹⋅(τ - ω × (I⋅ω))*dt
-
-    update_geometry!(obj, dt)
-    obj
-end
-
-# 2D
-function apply_force!(obj::GeometricObject{2}, F::Vec{2}, τ::Real, dt::Real)
-    m = obj.m
-    v = obj.v
-    ω = obj.ω
-    I = moment_of_inertia(geometry(obj))
-    I⁻¹ = inv_moment_of_inertia(I)
-
-    # update velocities first
-    obj.v = v + F/m*dt
-    obj.ω = ω + I⁻¹*τ*dt
+    obj.v = v + F / m * dt
+    obj.ω = ω + I⁻¹ ⋅ (τ - _cross(ω, I⋅ω)) * dt
 
     update_geometry!(obj, dt)
     obj
