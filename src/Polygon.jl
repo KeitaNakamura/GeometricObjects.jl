@@ -77,9 +77,7 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
         num += a * ((xᵢ ⋅ xᵢ) + (xᵢ ⋅ xᵢ₊₁) + (xᵢ₊₁ ⋅ xᵢ₊₁))
         den += a
     end
-    symmetric(@Mat([0 0 0
-                    0 0 0
-                    0 0 num/6den]), :U)
+    num/6den
 end
 
 @inline function getline(poly::Polygon, i::Int)

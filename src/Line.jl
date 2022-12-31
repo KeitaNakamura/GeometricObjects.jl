@@ -17,9 +17,7 @@ function moment_of_inertia(line::Line{2})
     a, b = coordinates(line)
     v = b - a
     l² = v ⋅ v
-    symmetric(@Mat([0 0 0
-                    0 0 0
-                    0 0 l²/12]), :U)
+    l²/12
 end
 
 function moment_of_inertia(line::Line{3, T}) where {T}

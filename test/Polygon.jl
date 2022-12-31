@@ -140,7 +140,5 @@
 
     # moment of inertia
     poly = Rectangle(Vec(-2.0, -1.0), Vec(1.0, 3.0))
-    @test (@inferred moment_of_inertia(poly)) ≈ @Mat [0 0 0
-                                                      0 0 0
-                                                      0 0 (3^2+4^2) / 12]
+    @test (@inferred moment_of_inertia(poly)) ≈ (3^2+4^2)/12
 end
