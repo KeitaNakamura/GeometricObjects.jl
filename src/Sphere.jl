@@ -79,7 +79,7 @@ end
     distance(::Sphere, x::Vec)
     distance(::Sphere, x::Vec, threshold::Real)
 
-Compute the distance vector from `x` to perpendicular foot on surface of sphere.
+Return the distance vector from `x` to perpendicular foot on surface of sphere.
 When `threshold` is given, check the contact between line and point `x`,
 and return `nothing` if contact is not detected.
 

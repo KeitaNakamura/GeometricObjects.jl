@@ -47,7 +47,7 @@ end
     distance(::Line, x::Vec)
     distance(::Line, x::Vec, threshold::Real)
 
-Compute the distance vector from `x` to perpendicular foot.
+Return the distance vector from `x` to perpendicular foot.
 When `threshold` is given, check the contact between line and point `x`,
 and return `nothing` if contact is not detected.
 Note that if the perpendicular foot does not lie on the line,
@@ -89,7 +89,7 @@ end
 """
     GeometricObjects.perpendicularfoot(::Line, x::Vec)
 
-Compute the position of perpendicular foot.
+Return the position of perpendicular foot.
 """
 function perpendicularfoot(line::Line, x::Vec)
     x + distance(line, x)
