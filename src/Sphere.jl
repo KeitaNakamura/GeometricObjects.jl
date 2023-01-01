@@ -19,9 +19,7 @@ end
 # http://hyperphysics.phy-astr.gsu.edu/hbase/tdisc.html
 function moment_of_inertia(x::Circle{2})
     r = radius(x)
-    symmetric(@Mat([0 0 0
-                    0 0 0
-                    0 0 r^2/2]), :U)
+    r^2/2
 end
 
 # call methods for Sphere

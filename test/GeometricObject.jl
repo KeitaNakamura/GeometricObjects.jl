@@ -21,7 +21,7 @@
         l² = v ⋅ v
         I = l² / 12 * line.m
         apply_force!(line, Vec(-0.8,-0.8), I, 1.0)
-        @test moment_of_inertia(geometry(line))[3,3] ≈ I
+        @test moment_of_inertia(geometry(line)) ≈ I
         @test norm(coordinates(line, 2) - coordinates(line, 1)) ≈ norm(v)
         @test (x = coordinates(line, 2) - coordinates(line, 1); atan(x[2]/x[1])) ≈ 1
         ## 3D
