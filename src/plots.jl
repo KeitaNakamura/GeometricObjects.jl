@@ -15,13 +15,13 @@ end
 end
 
 @recipe function f(poly::Polygon)
-    seriestype := :geometry
+    seriestype := :shape
     aspect_ratio := :equal
     unzip(coordinates(poly))
 end
 
 @recipe function f(sphere::Union{Sphere{2}, Circle{2}})
-    seriestype := :geometry
+    seriestype := :shape
     aspect_ratio := :equal
     xc = centroid(sphere)
     r = radius(sphere)
