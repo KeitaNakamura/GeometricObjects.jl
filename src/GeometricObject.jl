@@ -47,7 +47,7 @@ end
 """
     update_geometry!(::GeometricObject, dt)
 
-Update geometry of object by time increment `dt`.
+Update geometry of object by timestep `dt`.
 Current linear and angular velocities of object are used in the calculation.
 """
 function update_geometry!(obj::GeometricObject, dt::Real)
@@ -59,8 +59,11 @@ function update_geometry!(obj::GeometricObject, dt::Real)
     obj
 end
 
-_cross(x, y) = cross(x, y)
-_cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D case
+"""
+    apply_force!(object::GeometricObject, F, τ, dt)
+
+Apply linear force `F` and torque (moment of force) `τ` to `object` with timestep `dt`.
+"""
 function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}, Real}, dt::Real) where {dim}
     m = obj.m
     v = obj.v
@@ -75,6 +78,8 @@ function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}
     update_geometry!(obj, dt)
     obj
 end
+_cross(x, y) = cross(x, y)
+_cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D case
 
 Base.in(x::Vec, obj::GeometricObject) = x in geometry(obj)
 
