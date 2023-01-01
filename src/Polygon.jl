@@ -21,7 +21,7 @@ function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = 
     Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1); x, y, z)
 end
 
-@inline repeated(x::AbstractVector, i::Int) = @inbounds x[(i-1) % length(x) + 1]
+@inline repeated(x::AbstractVector, i::Int) = x[(i-1) % length(x) + 1]
 
 # https://en.wikipedia.org/wiki/Centroid
 function centroid(poly::Polygon{2, T}) where {T}
@@ -110,52 +110,65 @@ Check if `x` is `in` a polygon.
     ifelse(I === 1 || I === 2, include_bounds, isodd(J))
 end
 
-function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
-    dist = zero(Vec{2, T})
-    count = 0
-    @inbounds for i in 1:num_coordinates(poly)
-        line = getline(poly, i)
-        d = distance(line, x, r)
-        if d !== nothing
-            dist += d
-            count += 1
-        end
-    end
-    count != 0 && return dist / count
+############
+# distance #
+############
 
-    for xᵢ in coordinates(poly)
-        xᵢ in Circle(x, r) && return xᵢ - x
-    end
+function distance(poly::Polygon{2}, x::Vec{2}, r::Real)
+    d = distance_from_sides((a...)->nothing, poly, x, r)
+    d !== nothing && return d
+    index = distance_from_vertices(poly, x, r)
+    index !== nothing && return coordinates(poly, index) - x
     nothing
 end
 
-function distance(poly::Polygon{2, T}, x::Vec{2, T}, r::T, line_values::AbstractVector{U}) where {T, U}
-    @assert num_coordinates(poly) == length(line_values)
-    dist = zero(Vec{2, T})
-    value = zero(U)
+function distance(poly::Polygon{2}, x::Vec{2}, r::Real, ::Symbol)
+    inds = Vector{Int}(undef, num_coordinates(poly))
+    n = Ref(0)
+    value = distance_from_sides(poly, x, r) do count, i
+        n[] = count
+        inds[count] = i
+    end
+    value !== nothing && return (value, resize!(inds, n[]))
+    index = distance_from_vertices(poly, x, r)
+    index === nothing && return nothing
+    resize!(inds, 2)
+    @inbounds begin
+        inds[1] = ifelse(index==1, num_coordinates(poly), index-1)
+        inds[2] = index
+    end
+    coordinates(poly, index)-x, inds
+end
+
+# helpers
+function distance_from_sides(f, poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
+    val = zero(Vec{2, T})
     count = 0
-    @inbounds for i in 1:num_coordinates(poly)
+    @inbounds @simd for i in 1:num_coordinates(poly)
         line = getline(poly, i)
         d = distance(line, x, r)
         if d !== nothing
-            dist += d
-            value += line_values[i]
-            count += 1
+            val += d
+            f(count+=1, i)
         end
     end
-    count != 0 && return (dist/count, value/count)
-
-    @inbounds for i in 1:num_coordinates(poly)
+    count==0 ? nothing : val/count
+end
+function distance_from_vertices(poly::Polygon{2, T}, x::Vec{2, T}, r::T) where {T}
+    index = 0
+    ddmin = T(Inf)
+    @inbounds @simd for i in 1:num_coordinates(poly)
         xᵢ = coordinates(poly, i)
         if xᵢ in Circle(x, r)
-            if i == 1
-                return (xᵢ - x), (line_values[end] + line_values[i]) / 2
-            else
-                return (xᵢ - x), (line_values[i-1] + line_values[i]) / 2
+            d = xᵢ - x
+            dd = d ⋅ d
+            if dd < ddmin
+                ddmin = dd
+                index = i
             end
         end
     end
-    nothing
+    index==0 ? nothing : index
 end
 
 """
