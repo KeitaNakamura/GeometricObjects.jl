@@ -34,11 +34,22 @@ function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}) where {T}
 end
 inv_moment_of_inertia(I::Real) = inv(I)
 
+"""
+    translate!(object::GeometricObject, u::Vec)
+
+Translate `object` by the displacement `u`.
+"""
 function translate!(obj::GeometricObject, u::Vec)
     obj.geometry = translate(geometry(obj), u)
     obj
 end
 
+"""
+    rotate!(object::GeometricObject, θ::Vec)
+
+Rotate `object` by the angle vector `θ`.
+`normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
+"""
 function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
     obj.geometry = rotate(geometry(obj), θ)
     obj
