@@ -1,9 +1,5 @@
-function vtk_format(x::AbstractVector{<: Vec{dim, T}}) where {dim, T}
-    n = length(x)
-    v = reinterpret(T, Array(x))
-    out = zeros(T, (dim == 2 ? 3 : dim), n)
-    out[1:dim, :] .= reshape(v, dim, n)
-    out
+function vtk_format(x::AbstractVector{Vec{dim, T}}) where {dim, T}
+    reshape(reinterpret(T, x), (dim, length(x)))
 end
 
 function WriteVTK.vtk_grid(vtk::AbstractString, line::Line)
