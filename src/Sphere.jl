@@ -55,15 +55,15 @@ end
 Check if `x` is `in` a sphere.
 
 ```jldoctest
-julia> sphere = Sphere(Vec(1.0,1.0), 1.0)
-Sphere{2, Float64}:
-  Coordinates: [[1.0, 1.0]]
-  Attitude: [1.0, 0.0]
+julia> sphere = Sphere(Vec(1.0,1.0,1.0), 1.0)
+Sphere{3, Float64}:
+  Coordinates: [[1.0, 1.0, 1.0]]
+  Attitude: [1.0, 0.0, 0.0]
 
-julia> Vec(0.5, 0.5) in sphere
+julia> Vec(0.5, 0.5, 0.5) in sphere
 true
 
-julia> Vec(0.0, 0.0) in sphere
+julia> Vec(0.0, 0.0, 0.0) in sphere
 false
 ```
 """
