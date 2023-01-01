@@ -89,12 +89,13 @@ Sphere{2, Float64}:
   Coordinates: [[1.0, 1.0]]
   Attitude: [1.0, 0.0]
 
-julia> d = distance(sphere, Vec(0.0,0.0))
-2-element Vec{2, Float64}:
- 0.29289321881345254
- 0.29289321881345254
+julia> d = distance(sphere, Vec(0.0,0.0,0.0))
+3-element Vec{3, Float64}:
+ 0.4226497308103742
+ 0.4226497308103742
+ 0.4226497308103742
 
-julia> norm(d) ≈ √2 - 1
+julia> norm(d) ≈ √3 - 1
 true
 ```
 """
