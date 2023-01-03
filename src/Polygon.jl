@@ -3,22 +3,16 @@ struct Polygon{dim, T, L} <: Geometry{dim, T}
     q::Quaternion{T}
 end
 
-_projection(v::Vec{2}, ::Nothing, ::Nothing, ::Nothing) = v
-_projection(v::Vec{2}, x::Real, ::Nothing, ::Nothing) = Vec(x, v[1], v[2]) # (y,z)
-_projection(v::Vec{2}, ::Nothing, y::Real, ::Nothing) = Vec(v[2], y, v[1]) # (z,x)
-_projection(v::Vec{2}, ::Nothing, ::Nothing, z::Real) = Vec(v[1], v[2], z) # (x,y)
-
-function Polygon(coordinates::Vec{2}...; x = nothing, y = nothing, z = nothing)
-    coords = _projection.(coordinates, x, y, z)
-    Geometry(Polygon, SVector(coords))
+function Polygon(coordinates::Vec{2}...)
+    Geometry(Polygon, SVector(coordinates))
 end
 
-function Rectangle(bottomleft::Vec{2, T}, topright::Vec{2, T}; x = nothing, y = nothing, z = nothing) where {T}
+function Rectangle(bottomleft::Vec{2}, topright::Vec{2})
     x0 = bottomleft[1]
     y0 = bottomleft[2]
     x1 = topright[1]
     y1 = topright[2]
-    Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1); x, y, z)
+    Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1))
 end
 
 @inline repeated(x::AbstractVector, i::Int) = x[(i-1) % length(x) + 1]
