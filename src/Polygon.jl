@@ -101,10 +101,16 @@ Check if `x` is `in` a polygon.
     ifelse(I === 1 || I === 2, include_bounds, isodd(J))
 end
 
-############
-# distance #
-############
+"""
+    distance(::Polygon, x::Vec, threshold::Real)
+    distance(::Polygon, x::Vec, threshold::Real, :return_indices)
 
+Check if the polygon is in contact with `x` with `threshold` distance,
+and return the minimum distance from `x` to the polygon when contact is detected,
+otherewise return `nothing`.
+If the (pseudo)-keyword `:return_indices` is given, the vector of indices of
+contacted sides is also returned.
+"""
 function distance(poly::Polygon{2}, x::Vec{2}, r::Real)
     d = distance_from_sides((a...)->nothing, poly, x, r)
     d !== nothing && return d
