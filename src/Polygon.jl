@@ -15,18 +15,16 @@ function Rectangle(bottomleft::Vec{2}, topright::Vec{2})
     Polygon(Vec(x0, y0), Vec(x1, y0), Vec(x1, y1), Vec(x0, y1))
 end
 
-@inline repeated(x::AbstractVector, i::Int) = x[(i-1) % length(x) + 1]
-
 # https://en.wikipedia.org/wiki/Centroid
 function centroid(poly::Polygon{2, T}) where {T}
     A = zero(T)
     x_c = zero(T)
     y_c = zero(T)
-    C = coordinates(poly)
+    C = SVector(coordinates(poly)..., coordinates(poly, 1))
     @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            Xᵢ = repeated(C, i)
-            Xᵢ₊₁ = repeated(C, i+1)
+            Xᵢ = C[i]
+            Xᵢ₊₁ = C[i+1]
             xᵢ, yᵢ = Xᵢ[1], Xᵢ[2]
             xᵢ₊₁, yᵢ₊₁ = Xᵢ₊₁[1], Xᵢ₊₁[2]
         end
@@ -41,11 +39,11 @@ end
 
 function area(poly::Polygon{2, T}) where {T}
     A = zero(T)
-    C = coordinates(poly)
+    C = SVector(coordinates(poly)..., coordinates(poly, 1))
     @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            Xᵢ = repeated(C, i)
-            Xᵢ₊₁ = repeated(C, i+1)
+            Xᵢ = C[i]
+            Xᵢ₊₁ = C[i+1]
             xᵢ, yᵢ = Xᵢ[1], Xᵢ[2]
             xᵢ₊₁, yᵢ₊₁ = Xᵢ₊₁[1], Xᵢ₊₁[2]
         end
@@ -61,11 +59,11 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
     xc = centroid(poly)
     num = zero(T)
     den = zero(T)
-    C = coordinates(poly)
+    C = SVector(coordinates(poly)..., coordinates(poly, 1))
     @simd for i in 1:num_coordinates(poly)
         @inbounds begin
-            xᵢ = repeated(C, i) - xc
-            xᵢ₊₁ = repeated(C, i+1) - xc
+            xᵢ = C[i] - xc
+            xᵢ₊₁ = C[i+1] - xc
         end
         a = norm(xᵢ₊₁ × xᵢ)
         num += a * ((xᵢ ⋅ xᵢ) + (xᵢ ⋅ xᵢ₊₁) + (xᵢ₊₁ ⋅ xᵢ₊₁))
@@ -75,10 +73,9 @@ function moment_of_inertia(poly::Polygon{2, T}) where {T}
 end
 
 @inline function getline(poly::Polygon, i::Int)
-    C = coordinates(poly)
-    i == length(C) && return @inbounds Line(C[i], C[1])
-    @boundscheck checkbounds(C, i)
-    @inbounds Line(C[i], C[i+1])
+    @_propagate_inbounds_meta
+    C = SVector(coordinates(poly)..., coordinates(poly, 1))
+    Line(C[i], C[i+1])
 end
 
 function Base.eachline(poly::Polygon)
