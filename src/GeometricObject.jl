@@ -24,6 +24,7 @@ end
 geometry(x::GeometricObject) = x.geometry
 coordinates(x::GeometricObject) = coordinates(geometry(x))
 coordinates(x::GeometricObject, i::Int) = (@_propagate_inbounds_meta; coordinates(geometry(x), i))
+num_coordinates(x::GeometricObject) = num_coordinates(geometry(x))
 quaternion(x::GeometricObject) = quaternion(geometry(x))
 attitude(x::GeometricObject) = attitude(geometry(x))
 
