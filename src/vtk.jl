@@ -1,6 +1,9 @@
 function vtk_format(x::AbstractVector{Vec{dim, T}}) where {dim, T}
     reshape(reinterpret(T, x), (dim, length(x)))
 end
+function vtk_format(x::SVector{<: Any, Vec{dim, T}}) where {dim, T}
+    reshape(vcat(x...), (dim, length(x)))
+end
 
 function WriteVTK.vtk_grid(vtk::AbstractString, line::Line)
     coords = vtk_format(coordinates(line))
