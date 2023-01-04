@@ -25,6 +25,7 @@ export
     rotate,
     enlarge,
     coordinates,
+    num_coordinates,
     attitude,
 # Line
     Line,
