@@ -1,13 +1,13 @@
-abstract type GeometricObject{dim, T} end
+abstract type GeometricObject{dim, T, S} end
 
-mutable struct GeometricObject2D{T, S <: Geometry{2, T}} <: GeometricObject{2, T}
+mutable struct GeometricObject2D{T, S <: Geometry{2, T}} <: GeometricObject{2, T, S}
     geometry::S
     m::T
     v::Vec{2, T}
     ω::T
 end
 
-mutable struct GeometricObject3D{T, S <: Geometry{3, T}} <: GeometricObject{3, T}
+mutable struct GeometricObject3D{T, S <: Geometry{3, T}} <: GeometricObject{3, T, S}
     geometry::S
     m::T
     v::Vec{3, T}
