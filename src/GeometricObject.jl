@@ -1,13 +1,13 @@
-abstract type GeometricObject{dim, T} end
+abstract type GeometricObject{dim, T, S} end
 
-mutable struct GeometricObject2D{T, S <: Geometry{2, T}} <: GeometricObject{2, T}
+mutable struct GeometricObject2D{T, S <: Geometry{2, T}} <: GeometricObject{2, T, S}
     geometry::S
     m::T
     v::Vec{2, T}
     ω::T
 end
 
-mutable struct GeometricObject3D{T, S <: Geometry{3, T}} <: GeometricObject{3, T}
+mutable struct GeometricObject3D{T, S <: Geometry{3, T}} <: GeometricObject{3, T, S}
     geometry::S
     m::T
     v::Vec{3, T}
@@ -24,6 +24,7 @@ end
 geometry(x::GeometricObject) = x.geometry
 coordinates(x::GeometricObject) = coordinates(geometry(x))
 coordinates(x::GeometricObject, i::Int) = (@_propagate_inbounds_meta; coordinates(geometry(x), i))
+num_coordinates(x::GeometricObject) = num_coordinates(geometry(x))
 quaternion(x::GeometricObject) = quaternion(geometry(x))
 attitude(x::GeometricObject) = attitude(geometry(x))
 
