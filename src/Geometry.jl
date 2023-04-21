@@ -5,6 +5,7 @@ function Geometry(::Type{S}, coordinates::AbstractVector{<: Vec{dim, T}}, args..
     S(coordinates, q, args...)
 end
 
+realtype(x::Geometry{<: Any, T}) where {T} = T
 num_coordinates(x::Geometry) = length(coordinates(x))
 coordinates(x::Geometry) = x.coordinates
 coordinates(x::Geometry, i::Int) = (@_propagate_inbounds_meta; coordinates(x)[i])
