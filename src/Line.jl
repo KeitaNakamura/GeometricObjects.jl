@@ -50,8 +50,6 @@ end
 Return the distance vector from `x` to perpendicular foot.
 When `threshold` is given, check the contact between line and point `x`,
 and return `nothing` if contact is not detected.
-Note that if the perpendicular foot does not lie on the line,
-contact detection is performed using distance between `x` and vertices of line.
 
 ```jldoctest
 julia> line = Line(@Vec[0.0, 0.0] => @Vec[1.0, 1.0])
