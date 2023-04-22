@@ -105,9 +105,9 @@ function normalunit(line::Line{2})
 end
 
 """
-    in(x::Vec, line::Line)
+    ison(x::Vec, line::Line)
 
-Check if `x` is `in` line.
+Check if a point `ison` line.
 
 # Examples
 ```jldoctest
@@ -116,14 +116,14 @@ Line{2, Float64}:
   Coordinates: [[0.0, 0.0], [2.0, 2.0]]
   Attitude: [1.0, 0.0]
 
-julia> @Vec[1.0, 1.0] in line
+julia> ison(@Vec[1.0, 1.0], line)
 true
 
-julia> @Vec[1.0, 0.0] in line
+julia> ison(@Vec[1.0, 0.0], line)
 false
 ```
 """
-@inline function Base.in(x::Vec, line::Line)
+@inline function ison(x::Vec, line::Line)
     c1, c2 = coordinates(line)
     @inbounds begin
         ax = c1 - x
@@ -134,7 +134,7 @@ false
 end
 _pow2(x) = x * abs(x)
 
-# helper function for `in(x, polygon)`
+# helper function for `ison(x, polygon)`
 function ray_casting_to_right(line::Line{2}, X::Vec{2})
     @inbounds begin
         x, y = X[1], X[2]
@@ -167,7 +167,7 @@ function Base.intersect(line1::Line{2}, line2::Line{2}; extended::Tuple{Bool, Bo
     p1 = (x1y2_y1x2*(x3-x4) - (x1-x2)*x3y4_y3x4) / D
     p2 = (x1y2_y1x2*(y3-y4) - (y1-y2)*x3y4_y3x4) / D
     p = Vec(p1, p2)
-    ifelse((extended[1] || p in line1) && (extended[2] || p in line2), p, nothing)
+    ifelse((extended[1] || ison(p, line1)) && (extended[2] || ison(p, line2)), p, nothing)
 end
 
 function Base.intersect(line1::Line{3}, line2::Line{3}; extended::Tuple{Bool, Bool} = (false, false))
@@ -184,5 +184,5 @@ function Base.intersect(line1::Line{3}, line2::Line{3}; extended::Tuple{Bool, Bo
     p1 = c1[1] + d1 * n1
     p2 = c2[1] + d2 * n2
     p1 ≈ p2 || return nothing
-    ifelse((extended[1] || p1 in line1) && (extended[2] || p1 in line2), p1, nothing)
+    ifelse((extended[1] || ison(p1, line1)) && (extended[2] || ison(p1, line2)), p1, nothing)
 end

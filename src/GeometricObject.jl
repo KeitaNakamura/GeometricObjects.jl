@@ -93,14 +93,6 @@ end
 _cross(x, y) = cross(x, y)
 _cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D case
 
-Base.in(x::Vec, obj::GeometricObject) = x in geometry(obj)
-
-for IterType in (:Tuple, :AbstractArray)
-    @eval function Base.findall(pred::Base.Fix2{typeof(in), <: GeometricObject}, iter::$IterType)
-        findall(x -> in(x, pred.x), iter)
-    end
-end
-
 function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
     print(io, typeof(x), ":\n")
     buf = IOBuffer()

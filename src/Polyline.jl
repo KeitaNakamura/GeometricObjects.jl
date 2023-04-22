@@ -29,7 +29,7 @@ function distance(poly::Polyline{dim, T}, x::Vec{dim, T}, r::T; include_tips::Bo
             (i == 1 || i == num_coordinates(poly)) && continue
         end
         xᵢ = coordinates(poly, i)
-        xᵢ in Circle(x, r) && return xᵢ - x
+        isinside(xᵢ, Circle(x, r)) && return xᵢ - x
     end
     nothing
 end
