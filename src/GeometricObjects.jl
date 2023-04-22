@@ -29,9 +29,11 @@ export
     attitude,
 # Line
     Line,
+    ison,
 # Polygon
     Polygon,
     Rectangle,
+    isinside,
 # Polyline
     Polyline,
 # Sphere/Circle

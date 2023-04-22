@@ -23,7 +23,7 @@ function moment_of_inertia(x::Circle{2})
 end
 
 # call methods for Sphere
-Base.in(x::Vec{2}, circle::Circle; include_bounds::Bool = true) = in(x, Sphere(circle); include_bounds)
+isinside(x::Vec{2}, circle::Circle; include_bounds::Bool = true) = isinside(x, Sphere(circle); include_bounds)
 distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
 distance(circle::Circle, x::Vec{2}, r::Real) = distance(Sphere(circle), x, r)
 
@@ -50,9 +50,9 @@ function moment_of_inertia(x::Sphere)
 end
 
 """
-    in(x::Vec, ::Sphere; include_bounds = true)
+    isinside(x::Vec, ::Sphere; include_bounds = true)
 
-Check if `x` is `in` a sphere.
+Check if a point `isinside` a sphere.
 
 ```jldoctest
 julia> sphere = Sphere(Vec(1.0,1.0,1.0), 1.0)
@@ -60,14 +60,14 @@ Sphere{3, Float64}:
   Coordinates: [[1.0, 1.0, 1.0]]
   Attitude: [1.0, 0.0, 0.0]
 
-julia> Vec(0.5, 0.5, 0.5) in sphere
+julia> isinside(Vec(0.5, 0.5, 0.5), sphere)
 true
 
-julia> Vec(0.0, 0.0, 0.0) in sphere
+julia> isinside(Vec(0.0, 0.0, 0.0), sphere)
 false
 ```
 """
-function Base.in(x::Vec{dim}, sphere::Sphere{dim}; include_bounds::Bool = true) where {dim}
+function isinside(x::Vec{dim}, sphere::Sphere{dim}; include_bounds::Bool = true) where {dim}
     c = centroid(sphere)
     d = x - c
     d² = d ⋅ d

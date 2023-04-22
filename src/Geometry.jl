@@ -66,11 +66,7 @@ function _rotate(geometry::Geometry{dim}, θ::Vec) where {dim}
     )
 end
 
-for IterType in (:Tuple, :AbstractArray)
-    @eval function Base.findall(pred::Base.Fix2{typeof(in), <: Geometry}, iter::$IterType)
-        findall(x -> in(x, pred.x), iter)
-    end
-end
+isinside(geo::Geometry) = Base.Fix2(isinside, geo)
 
 function Base.show(io::IO, mime::MIME"text/plain", x::Geometry)
     print(io, typeof(x), ":\n")

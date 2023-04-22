@@ -1,60 +1,60 @@
 @testset "Polygon" begin
-    # `in`
+    # `isinside`
     poly = Polygon(Vec(0.1,0.1), Vec(0.3,0.1), Vec(0.4,0.0), Vec(0.5,0.1), Vec(0.7,0.1),
                    Vec(0.6,0.4), Vec(0.5,0.4), Vec(0.4,0.3), Vec(0.3,0.3), Vec(0.2,0.4))
     # Vec(0.0,0.0)
-    @test in(Vec(0.0,0.0), poly; include_bounds = true)  == false
-    @test in(Vec(0.0,0.0), poly; include_bounds = false) == false
+    @test isinside(Vec(0.0,0.0), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.0,0.0), poly; include_bounds = false) == false
     # Vec(0.0,0.1)
-    @test in(Vec(0.0,0.1), poly; include_bounds = true)  == false
-    @test in(Vec(0.0,0.1), poly; include_bounds = false) == false
+    @test isinside(Vec(0.0,0.1), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.0,0.1), poly; include_bounds = false) == false
     # Vec(0.2,0.1)
-    @test in(Vec(0.2,0.1), poly; include_bounds = true)  == true
-    @test in(Vec(0.2,0.1), poly; include_bounds = false) == false
+    @test isinside(Vec(0.2,0.1), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.2,0.1), poly; include_bounds = false) == false
     # Vec(0.4,0.1)
-    @test in(Vec(0.4,0.1), poly; include_bounds = true)  == true
-    @test in(Vec(0.4,0.1), poly; include_bounds = false) == true
+    @test isinside(Vec(0.4,0.1), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.4,0.1), poly; include_bounds = false) == true
     # Vec(0.6,0.1)
-    @test in(Vec(0.6,0.1), poly; include_bounds = true)  == true
-    @test in(Vec(0.6,0.1), poly; include_bounds = false) == false
+    @test isinside(Vec(0.6,0.1), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.6,0.1), poly; include_bounds = false) == false
     # Vec(0.1,0.2)
-    @test in(Vec(0.1,0.2), poly; include_bounds = true)  == false
-    @test in(Vec(0.1,0.2), poly; include_bounds = false) == false
+    @test isinside(Vec(0.1,0.2), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.1,0.2), poly; include_bounds = false) == false
     # Vec(0.3,0.2)
-    @test in(Vec(0.3,0.2), poly; include_bounds = true)  == true
-    @test in(Vec(0.3,0.2), poly; include_bounds = false) == true
+    @test isinside(Vec(0.3,0.2), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.3,0.2), poly; include_bounds = false) == true
     # Vec(0.7,0.2)
-    @test in(Vec(0.7,0.2), poly; include_bounds = true)  == false
-    @test in(Vec(0.7,0.2), poly; include_bounds = false) == false
+    @test isinside(Vec(0.7,0.2), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.7,0.2), poly; include_bounds = false) == false
     # Vec(0.1,0.3)
-    @test in(Vec(0.1,0.3), poly; include_bounds = true)  == false
-    @test in(Vec(0.1,0.3), poly; include_bounds = false) == false
+    @test isinside(Vec(0.1,0.3), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.1,0.3), poly; include_bounds = false) == false
     # Vec(0.2,0.3)
-    @test in(Vec(0.2,0.3), poly; include_bounds = true)  == true
-    @test in(Vec(0.2,0.3), poly; include_bounds = false) == true
+    @test isinside(Vec(0.2,0.3), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.2,0.3), poly; include_bounds = false) == true
     # Vec(0.5,0.3)
-    @test in(Vec(0.5,0.3), poly; include_bounds = true)  == true
-    @test in(Vec(0.5,0.3), poly; include_bounds = false) == true
+    @test isinside(Vec(0.5,0.3), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.5,0.3), poly; include_bounds = false) == true
     # Vec(0.7,0.3)
-    @test in(Vec(0.7,0.3), poly; include_bounds = true)  == false
-    @test in(Vec(0.7,0.3), poly; include_bounds = false) == false
+    @test isinside(Vec(0.7,0.3), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.7,0.3), poly; include_bounds = false) == false
     # Vec(0.1,0.4)
-    @test in(Vec(0.1,0.4), poly; include_bounds = true)  == false
-    @test in(Vec(0.1,0.4), poly; include_bounds = false) == false
+    @test isinside(Vec(0.1,0.4), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.1,0.4), poly; include_bounds = false) == false
     # Vec(0.2,0.4)
-    @test in(Vec(0.2,0.4), poly; include_bounds = true)  == true
-    @test in(Vec(0.2,0.4), poly; include_bounds = false) == false
+    @test isinside(Vec(0.2,0.4), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.2,0.4), poly; include_bounds = false) == false
     # Vec(0.3,0.4)
-    @test in(Vec(0.3,0.4), poly; include_bounds = true)  == false
-    @test in(Vec(0.3,0.4), poly; include_bounds = false) == false
+    @test isinside(Vec(0.3,0.4), poly; include_bounds = true)  == false
+    @test isinside(Vec(0.3,0.4), poly; include_bounds = false) == false
     # Vec(0.6,0.4)
-    @test in(Vec(0.6,0.4), poly; include_bounds = true)  == true
-    @test in(Vec(0.6,0.4), poly; include_bounds = false) == false
+    @test isinside(Vec(0.6,0.4), poly; include_bounds = true)  == true
+    @test isinside(Vec(0.6,0.4), poly; include_bounds = false) == false
 
-    # findall for `in`
+    # findall for `isinside`
     poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))
     points = Vec{2,Float64}[(0.5,0.5), (0.8,0.6), (1.2,1.8), (0.1,0.2)]
-    @test findall(in(poly), points) == [1,2,4]
+    @test findall(isinside(poly), points) == [1,2,4]
 
     # rotate
     poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))

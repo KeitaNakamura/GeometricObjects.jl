@@ -83,15 +83,15 @@ end
 end
 
 """
-    in(x::Vec, ::Polygon; include_bounds = true)
+    isinside(x::Vec, ::Polygon; include_bounds = true)
 
-Check if `x` is `in` a polygon.
+Check if a point `isinside` a polygon.
 """
-@inline function Base.in(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
+@inline function isinside(x::Vec{2}, poly::Polygon{2}; include_bounds::Bool = true)
     I = 0
     @inbounds @simd for i in 1:num_coordinates(poly)
         line = getline(poly, i)
-        I += (x in line)
+        I += ison(x, line)
     end
     J = 0
     @inbounds @simd for i in 1:num_coordinates(poly)
@@ -135,7 +135,7 @@ function distance_from_vertices(poly::Polygon{2}, x::Vec{2}, r::Real)
     ddmin = T(Inf)
     @inbounds @simd for i in 1:num_coordinates(poly)
         xᵢ = coordinates(poly, i)
-        if xᵢ in Circle(x, r)
+        if isinside(xᵢ, Circle(x, r))
             d = xᵢ - x
             dd = d ⋅ d
             if dd < ddmin
