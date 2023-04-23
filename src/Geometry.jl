@@ -68,6 +68,8 @@ end
 
 isinside(geo::Geometry) = Base.Fix2(isinside, geo)
 
+Broadcast.broadcastable(geo::Geometry) = (geo,)
+
 function Base.show(io::IO, mime::MIME"text/plain", x::Geometry)
     print(io, typeof(x), ":\n")
     print(io, "  Coordinates: [", join(coordinates(x), ", "), "]\n")

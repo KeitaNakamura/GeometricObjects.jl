@@ -93,6 +93,8 @@ end
 _cross(x, y) = cross(x, y)
 _cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D case
 
+Broadcast.broadcastable(geo::GeometricObject) = (geo,)
+
 function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
     print(io, typeof(x), ":\n")
     buf = IOBuffer()
