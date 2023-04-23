@@ -52,22 +52,22 @@ When `threshold` is given, check the contact between line and point `x`,
 and return `nothing` if contact is not detected.
 
 ```jldoctest
-julia> line = Line(@Vec[0.0, 0.0] => @Vec[1.0, 1.0])
+julia> line = Line(Vec(0.0, 0.0) => Vec(1.0, 1.0))
 Line{2, Float64}:
   Coordinates: [[0.0, 0.0], [1.0, 1.0]]
   Attitude: [1.0, 0.0]
 
-julia> distance(line, @Vec[1.0, 0.0])
+julia> distance(line, Vec(1.0, 0.0))
 2-element Vec{2, Float64}:
  -0.5
   0.5
 
-julia> distance(line, @Vec[1.0, 0.0], 1.0)
+julia> distance(line, Vec(1.0, 0.0), 1.0)
 2-element Vec{2, Float64}:
  -0.5
   0.5
 
-julia> distance(line, @Vec[1.0, 0.0], 0.5) === nothing
+julia> distance(line, Vec(1.0, 0.0), 0.5) === nothing
 true
 ```
 """
@@ -109,15 +109,15 @@ Check if a point `ison` line.
 
 # Examples
 ```jldoctest
-julia> line = Line(@Vec[0.0, 0.0], @Vec[2.0, 2.0])
+julia> line = Line(Vec(0.0, 0.0), Vec(2.0, 2.0))
 Line{2, Float64}:
   Coordinates: [[0.0, 0.0], [2.0, 2.0]]
   Attitude: [1.0, 0.0]
 
-julia> ison(@Vec[1.0, 1.0], line)
+julia> ison(Vec(1.0, 1.0), line)
 true
 
-julia> ison(@Vec[1.0, 0.0], line)
+julia> ison(Vec(1.0, 0.0), line)
 false
 ```
 """

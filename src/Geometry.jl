@@ -37,19 +37,19 @@ function enlarge(geometry::Geometry, R::Real)
 end
 
 """
-    translate(g::Geometry, u::Vec)
+    translate(geo::Geometry, u::Vec)
 
-Translate `g` by the displacement `u`.
+Translate `geo` by the displacement `u`.
 """
 function translate(geometry::Geometry, u::Vec)
     copy_geometry(geometry, coordinates(geometry) .+ u, quaternion(geometry))
 end
 
 """
-    rotate(g::Geometry{2}, θ::Real)
-    rotate(g::Geometry{3}, θ::Vec)
+    rotate(geo::Geometry{2}, θ::Real)
+    rotate(geo::Geometry{3}, θ::Vec)
 
-Rotate `g` by the angle `θ`.
+Rotate `geo` by the angle `θ`.
 In 3D, `normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
 """
 function rotate end
