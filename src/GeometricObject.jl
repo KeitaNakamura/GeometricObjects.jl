@@ -57,37 +57,38 @@ function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
 end
 
 """
-    update_geometry!(::GeometricObject, dt)
+    update_geometry!(::GeometricObject, Δt)
 
-Update geometry of object by timestep `dt`.
+Update geometry of object by timestep `Δt`.
 Current linear and angular velocities of object are used in the calculation.
 """
-function update_geometry!(obj::GeometricObject, dt::Real)
+function update_geometry!(obj::GeometricObject, Δt::Real)
     # v and ω need to be updated in advance
-    dx = obj.v * dt
-    dθ = obj.ω * dt
-    translate!(obj, dx)
-    rotate!(obj, dθ)
+    Δx = obj.v * Δt
+    Δθ = obj.ω * Δt
+    translate!(obj, Δx)
+    rotate!(obj, Δθ)
     obj
 end
 
 """
-    apply_force!(object::GeometricObject, F, τ, dt)
+    apply_force!(object::GeometricObject, F, τ, Δt)
 
-Apply linear force `F` and torque (moment of force) `τ` to `object` with timestep `dt`.
+Apply linear force `F` and torque (moment of force) `τ` to `object` with timestep `Δt`.
+This only updates the linear velocity `object.v` and the angular velocity `object.ω`.
+See also [`update_geometry!`](@ref).
 """
-function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}, Real}, dt::Real) where {dim}
+function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}, Real}, Δt::Real) where {dim}
     m = obj.m
     v = obj.v
     ω = obj.ω
     I = moment_of_inertia(geometry(obj))
     I⁻¹ = inv_moment_of_inertia(I)
 
-    # update velocities first
-    obj.v = v + F / m * dt
-    obj.ω = ω + I⁻¹ ⋅ (τ - _cross(ω, I⋅ω)) * dt
+    # update velocities
+    obj.v = v + F / m * Δt
+    obj.ω = ω + I⁻¹ ⋅ (τ - _cross(ω, I⋅ω)) * Δt
 
-    update_geometry!(obj, dt)
     obj
 end
 _cross(x, y) = cross(x, y)

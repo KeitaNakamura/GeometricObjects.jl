@@ -20,7 +20,7 @@
         v = coordinates(line, 2) - coordinates(line, 1)
         l² = v ⋅ v
         I = l² / 12 * line.m
-        apply_force!(line, Vec(-0.8,-0.8), I, 1.0)
+        update_geometry!(apply_force!(line, Vec(-0.8,-0.8), I, 1.0), 1.0)
         @test moment_of_inertia(geometry(line)) ≈ I
         @test norm(coordinates(line, 2) - coordinates(line, 1)) ≈ norm(v)
         @test (x = coordinates(line, 2) - coordinates(line, 1); atan(x[2]/x[1])) ≈ 1
@@ -29,7 +29,7 @@
         v = coordinates(line, 2) - coordinates(line, 1)
         l² = v ⋅ v
         I = l² / 12 * line.m
-        apply_force!(line, Vec(0.5,0.5,0.5), Vec(0.0,0.0,I), 1.0)
+        update_geometry!(apply_force!(line, Vec(0.5,0.5,0.5), Vec(0.0,0.0,I), 1.0), 1.0)
         @test centroid(geometry(line)) == [1.0, 0.5, 0.5]
         @test norm(coordinates(line, 2) - coordinates(line, 1)) ≈ norm(v)
         @test (x = coordinates(line, 2) - coordinates(line, 1); atan(x[2]/x[1])) ≈ 1
