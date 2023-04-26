@@ -27,6 +27,7 @@ coordinates(x::GeometricObject, i::Int) = (@_propagate_inbounds_meta; coordinate
 num_coordinates(x::GeometricObject) = num_coordinates(geometry(x))
 quaternion(x::GeometricObject) = quaternion(geometry(x))
 attitude(x::GeometricObject) = attitude(geometry(x))
+moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(geometry(x))
 
 function inv_moment_of_inertia(I::SymmetricSecondOrderTensor{3, T}) where {T}
     V, P = eigen(I)
@@ -82,7 +83,7 @@ function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}
     m = obj.m
     v = obj.v
     ω = obj.ω
-    I = moment_of_inertia(geometry(obj))
+    I = moment_of_inertia(obj)
     I⁻¹ = inv_moment_of_inertia(I)
 
     # update velocities
