@@ -80,6 +80,7 @@ This only updates the linear velocity `object.v` and the angular velocity `objec
 See also [`update_geometry!`](@ref).
 """
 function apply_force!(obj::GeometricObject{dim}, F::Vec{dim}, τ::Union{Vec{dim}, Real}, Δt::Real) where {dim}
+    isinf(obj.m) && return obj
     m = obj.m
     v = obj.v
     ω = obj.ω
