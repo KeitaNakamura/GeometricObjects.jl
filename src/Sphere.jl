@@ -41,6 +41,11 @@ centroid(x::Sphere) = @inbounds only(coordinates(x))
 radius(x::Sphere) = x.r
 enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radius(sphere))
 
+function volume(x::Sphere{3})
+    r = radius(x)
+    (4π*r^2)/3
+end
+
 function moment_of_inertia(x::Sphere)
     r = radius(x)
     I = 2r^2 / 5

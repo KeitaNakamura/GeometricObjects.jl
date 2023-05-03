@@ -20,6 +20,7 @@ export
     geometry,
     centroid,
     area,
+    volume,
     distance,
     moment_of_inertia,
     translate,
