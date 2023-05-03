@@ -5,6 +5,7 @@ using Reexport
 @reexport using WriteVTK
 using StaticArrays
 using RecipesBase
+using DelimitedFiles
 
 using Base: @_propagate_inbounds_meta
 
