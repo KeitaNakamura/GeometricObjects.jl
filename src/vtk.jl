@@ -32,7 +32,8 @@ end
 const SPHERE_REF_POINTS = vec(reinterpret(Vec{3, Float64}, readdlm(joinpath(@__DIR__, "../assets/sphere_ref_points.txt"), Float64)'))
 const SPHERE_REF_CELLS  = vec(reinterpret(NTuple{3, Int}, readdlm(joinpath(@__DIR__, "../assets/sphere_ref_cells.txt"), Int)' .+ 1))
 function WriteVTK.vtk_grid(vtk::AbstractString, sphere::Sphere{3}; kwargs...)
-    coords = reinterpret(reshape, Float64, radius(sphere) * SPHERE_REF_POINTS .+ centroid(sphere))
+    transform(x) = rotate(radius(sphere)*x, quaternion(sphere)) + centroid(sphere)
+    coords = reinterpret(reshape, Float64, transform.(SPHERE_REF_POINTS))
     cells = [MeshCell(VTKCellTypes.VTK_TRIANGLE, connectivity) for connectivity in SPHERE_REF_CELLS]
     vtk_grid(vtk, coords, cells; kwargs...)
 end
