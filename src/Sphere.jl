@@ -25,7 +25,7 @@ end
 # call methods for Sphere
 isinside(x::Vec{2}, circle::Circle; include_bounds::Bool = true) = isinside(x, Sphere(circle); include_bounds)
 distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
-distance(circle::Circle, x::Vec{2}, r::Real) = distance(Sphere(circle), x, r)
+distance(circle::Circle, x::Vec{2}, r::Real; inverse::Bool=false) = distance(Sphere(circle), x, r; inverse)
 
 
 struct Sphere{dim, T} <: Geometry{dim, T}
@@ -111,10 +111,16 @@ function distance(sphere::Sphere{dim}, x::Vec{dim}) where {dim}
     d * (v / norm_v)
 end
 
-function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real) where {dim}
-    v = centroid(sphere) - x
-    norm_v = norm(v)
-    d = norm_v - radius(sphere)
-    abs(d) ≤ r && return d * (v / norm_v)
+function distance(sphere::Sphere{dim}, x::Vec{dim}, r::Real; inverse::Bool=false) where {dim}
+    if inverse
+        v = x - centroid(sphere)
+        norm_v = norm(v)
+        d = radius(sphere) - norm_v
+    else
+        v = centroid(sphere) - x
+        norm_v = norm(v)
+        d = norm_v - radius(sphere)
+    end
+    d ≤ r && return d * (v / norm_v)
     nothing
 end

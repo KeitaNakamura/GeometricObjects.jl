@@ -13,10 +13,14 @@
 
     # distance
     sphere = Sphere(Vec(3.0,3.0,3.0), 2√3)
-    @test distance(sphere, Vec(0,0,0), √3+1) ≈ normalize(Vec(1,1,1)) * √3
+    @test distance(sphere, Vec(0,0,0), √3+1) ≈ [1,1,1]
     @test distance(sphere, Vec(0,0,0), √3-1) === nothing
-    @test distance(sphere, Vec(2,2,2), √3+1) ≈ normalize(Vec(-1,-1,-1)) * √3
-    @test distance(sphere, Vec(2,2,2), √3-1) === nothing
+    @test distance(sphere, Vec(2,2,2), √3+1) ≈ [-1,-1,-1]
+    @test distance(sphere, Vec(2,2,2), √3-1) ≈ [-1,-1,-1]
+    @test distance(sphere, Vec(0,0,0), √3+1; inverse=true) ≈ [1,1,1]
+    @test distance(sphere, Vec(0,0,0), √3-1; inverse=true) ≈ [1,1,1]
+    @test distance(sphere, Vec(2,2,2), √3+1; inverse=true) ≈ [-1,-1,-1]
+    @test distance(sphere, Vec(2,2,2), √3-1; inverse=true) === nothing
 end
 
 @testset "Circle" begin
@@ -35,8 +39,12 @@ end
 
     # distance
     sphere = Circle(Vec(3.0,3.0), 2√2)
-    @test distance(sphere, Vec(0,0), √2+1) ≈ normalize(Vec(1,1)) * √2
+    @test distance(sphere, Vec(0,0), √2+1) ≈ [1,1]
     @test distance(sphere, Vec(0,0), √2-1) === nothing
-    @test distance(sphere, Vec(2,2), √2+1) ≈ normalize(Vec(-1,-1)) * √2
-    @test distance(sphere, Vec(2,2), √2-1) === nothing
+    @test distance(sphere, Vec(2,2), √2+1) ≈ [-1,-1]
+    @test distance(sphere, Vec(2,2), √2-1) ≈ [-1,-1]
+    @test distance(sphere, Vec(0,0), √2+1; inverse=true) ≈ [1,1]
+    @test distance(sphere, Vec(0,0), √2-1; inverse=true) ≈ [1,1]
+    @test distance(sphere, Vec(2,2), √2+1; inverse=true) ≈ [-1,-1]
+    @test distance(sphere, Vec(2,2), √2-1; inverse=true) === nothing
 end
