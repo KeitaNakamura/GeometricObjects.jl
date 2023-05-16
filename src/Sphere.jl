@@ -43,7 +43,7 @@ enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radiu
 
 function volume(x::Sphere{3})
     r = radius(x)
-    (4π*r^2)/3
+    (4π*r^3)/3
 end
 
 function moment_of_inertia(x::Sphere)
