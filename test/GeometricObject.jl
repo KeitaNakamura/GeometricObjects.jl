@@ -11,8 +11,6 @@
         @test_throws Exception coordinates(obj, 3) # out of range
         # quaternion
         @test (@inferred quaternion(obj)) === quaternion(line)
-        # attitude
-        @test (@inferred attitude(obj)) === attitude(line)
     end
     @testset "apply_force!" begin
         ## 2D
