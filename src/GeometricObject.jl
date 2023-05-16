@@ -67,8 +67,8 @@ function update_geometry!(obj::GeometricObject, Δt::Real)
     # v and ω need to be updated in advance
     Δx = obj.v * Δt
     Δθ = obj.ω * Δt
-    translate!(obj, Δx)
     rotate!(obj, Δθ)
+    translate!(obj, Δx)
     obj
 end
 
