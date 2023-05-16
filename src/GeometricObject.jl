@@ -25,6 +25,7 @@ geometry(x::GeometricObject) = x.geometry
 coordinates(x::GeometricObject) = coordinates(geometry(x))
 coordinates(x::GeometricObject, i::Int) = (@_propagate_inbounds_meta; coordinates(geometry(x), i))
 num_coordinates(x::GeometricObject) = num_coordinates(geometry(x))
+centroid(x::GeometricObject) = centroid(geometry(x))
 quaternion(x::GeometricObject) = quaternion(geometry(x))
 moment_of_inertia(x::GeometricObject) = x.m * moment_of_inertia(geometry(x))
 
