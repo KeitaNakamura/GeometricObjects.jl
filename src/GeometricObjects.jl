@@ -41,6 +41,8 @@ export
     Sphere,
     Circle,
     radius,
+# FinitePoints
+    FinitePoints,
 # GeometricObject,
     GeometricObject,
     update_geometry!,
@@ -53,6 +55,7 @@ include("Line.jl")
 include("Polygon.jl")
 include("Polyline.jl")
 include("Sphere.jl")
+include("FinitePoints.jl")
 include("GeometricObject.jl")
 include("plots.jl")
 include("vtk.jl")
