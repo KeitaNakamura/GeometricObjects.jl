@@ -1,10 +1,10 @@
-struct Polygon{dim, T, L} <: Geometry{dim, T}
-    coordinates::SVector{L, Vec{dim, T}}
+mutable struct Polygon{dim, T, L} <: Geometry{dim, T}
+    coordinates::MVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
 
 function Polygon(coordinates::Vec{2}...)
-    Geometry(Polygon, SVector(coordinates))
+    Geometry(Polygon, MVector(coordinates))
 end
 
 function Rectangle(bottomleft::Vec{2}, topright::Vec{2})

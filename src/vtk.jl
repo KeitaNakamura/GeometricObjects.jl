@@ -1,7 +1,7 @@
 function vtk_format(x::AbstractVector{Vec{dim, T}}) where {dim, T}
     reinterpret(reshape, T, x)
 end
-function vtk_format(x::SVector{<: Any, Vec{dim, T}}) where {dim, T}
+function vtk_format(x::StaticVector{<: Any, Vec{dim, T}}) where {dim, T}
     reshape(vcat(x...), (dim, length(x)))
 end
 

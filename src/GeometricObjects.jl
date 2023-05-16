@@ -9,7 +9,7 @@ using DelimitedFiles
 
 using Base: @_propagate_inbounds_meta
 
-import Tensorial: rotate, quaternion
+import Tensorial: quaternion
 
 import LinearAlgebra: norm
 export norm
@@ -23,9 +23,8 @@ export
     volume,
     distance,
     moment_of_inertia,
-    translate,
-    rotate,
-    enlarge,
+    translate!,
+    rotate!,
     coordinates,
     num_coordinates,
     attitude,
@@ -46,8 +45,6 @@ export
     GeometricObject,
     update_geometry!,
     apply_force!,
-    translate!,
-    rotate!,
 # VTK
     vtk_grid
 

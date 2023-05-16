@@ -1,12 +1,10 @@
-struct Circle{dim, T} <: Geometry{dim, T}
-    coordinates::SVector{1, Vec{dim, T}}
+mutable struct Circle{dim, T} <: Geometry{dim, T}
+    coordinates::MVector{1, Vec{dim, T}}
     q::Quaternion{T}
     r::T
 end
 
-Circle(centroid::Vec{dim}, r::Real) where {dim} = Geometry(Circle, @SVector[centroid], r)
-
-enlarge(circle::Circle, R::Real) = Circle(coordinates(circle), quaternion(circle), R*radius(circle))
+Circle(centroid::Vec{dim}, r::Real) where {dim} = Geometry(Circle, @MVector[centroid], r)
 
 centroid(x::Circle) = @inbounds only(coordinates(x))
 radius(x::Circle) = x.r
@@ -28,18 +26,17 @@ distance(circle::Circle, x::Vec{2}) = distance(Sphere(circle), x)
 distance(circle::Circle, x::Vec{2}, r::Real; inverse::Bool=false) = distance(Sphere(circle), x, r; inverse)
 
 
-struct Sphere{dim, T} <: Geometry{dim, T}
-    coordinates::SVector{1, Vec{dim, T}}
+mutable struct Sphere{dim, T} <: Geometry{dim, T}
+    coordinates::MVector{1, Vec{dim, T}}
     q::Quaternion{T}
     r::T
 end
 
-Sphere(centroid::Vec, r::Real) = Geometry(Sphere, @SVector[centroid], r)
+Sphere(centroid::Vec, r::Real) = Geometry(Sphere, @MVector[centroid], r)
 Sphere(circle::Circle) = Sphere(coordinates(circle), circle.q, radius(circle))
 
 centroid(x::Sphere) = @inbounds only(coordinates(x))
 radius(x::Sphere) = x.r
-enlarge(sphere::Sphere, R::Real) = Sphere(coordinates(sphere), sphere.q, R*radius(sphere))
 
 function volume(x::Sphere{3})
     r = radius(x)

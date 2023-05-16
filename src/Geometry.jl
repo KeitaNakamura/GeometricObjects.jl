@@ -11,59 +11,44 @@ coordinates(x::Geometry) = x.coordinates
 coordinates(x::Geometry, i::Int) = (@_propagate_inbounds_meta; coordinates(x)[i])
 quaternion(x::Geometry) = x.q
 function attitude(x::Geometry{dim, T}) where {dim, T}
-    q = quaternion(x)
-    v = rotate(Vec{3,T}(1,0,0), q)
+    v = rotate(Vec{3,T}(1,0,0), quaternion(x))
     @Tensor v[1:dim]
 end
 moment_of_inertia(x::Geometry) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
-@generated function copy_geometry(geometry::Geometry, coordinates::SVector, q::Quaternion)
-    exps = [name in (:coordinates, :q) ? name : :(geometry.$name) for name in fieldnames(geometry)]
-    quote
-        $geometry($(exps...))
-    end
-end
-
-function centered(x::Geometry)
-    copy_geometry(x, coordinates(x) .- centroid(x), quaternion(x))
-end
-
-function enlarge(geometry::Geometry, R::Real)
-    copy_geometry(
-        geometry,
-        centroid(geometry) .+ R * coordinates(centered(geometry)),
-        quaternion(geometry),
-    )
-end
-
 """
-    translate(geo::Geometry, u::Vec)
+    translate!(geo::Geometry, u::Vec)
 
 Translate `geo` by the displacement `u`.
 """
-function translate(geometry::Geometry, u::Vec)
-    copy_geometry(geometry, coordinates(geometry) .+ u, quaternion(geometry))
+function translate!(geometry::Geometry, u::Vec)
+    coords = coordinates(geometry)
+    @inbounds @simd for i in eachindex(coords)
+        coords[i] += u
+    end
+    geometry
 end
 
 """
-    rotate(geo::Geometry{2}, θ::Real)
-    rotate(geo::Geometry{3}, θ::Vec)
+    rotate!(geo::Geometry{2}, θ::Real)
+    rotate!(geo::Geometry{3}, θ::Vec)
 
 Rotate `geo` by the angle `θ`.
 In 3D, `normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
 """
-function rotate end
-rotate(geometry::Geometry{3}, θ::Vec{3}) = _rotate(geometry, θ)
-rotate(geometry::Geometry{2}, θ::Real) = _rotate(geometry, Vec(0,0,θ))
-function _rotate(geometry::Geometry{dim}, θ::Vec) where {dim}
+function rotate! end
+rotate!(geometry::Geometry{3}, θ::Vec{3}) = _rotate!(geometry, θ)
+rotate!(geometry::Geometry{2}, θ::Real) = _rotate!(geometry, Vec(0,0,θ))
+function _rotate!(geometry::Geometry{dim}, θ::Vec) where {dim}
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
+    coords = coordinates(geometry)
     q = exp(Quaternion(θ/2))
     xc = centroid(geometry)
-    copy_geometry(
-        geometry,
-        (@. xc + $Tensorial.resizedim(rotate($coordinates(geometry) - xc, q), Val(dim))),
-        q * quaternion(geometry),
-    )
+    @inbounds @simd for i in eachindex(coords)
+        coords[i] = xc + Tensorial.resizedim(rotate(coords[i] - xc, q), Val(dim))
+    end
+    geometry.q = q * geometry.q
+    geometry
 end
 
 isinside(geo::Geometry) = Base.Fix2(isinside, geo)

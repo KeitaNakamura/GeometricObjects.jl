@@ -1,9 +1,9 @@
-struct Polyline{dim, T, L} <: Geometry{dim, T}
-    coordinates::SVector{L, Vec{dim, T}}
+mutable struct Polyline{dim, T, L} <: Geometry{dim, T}
+    coordinates::MVector{L, Vec{dim, T}}
     q::Quaternion{T}
 end
 
-Polyline(coordinates::Vec{2}...) = Geometry(Polyline, SVector(coordinates))
+Polyline(coordinates::Vec{2}...) = Geometry(Polyline, MVector(coordinates))
 
 @inline function getline(poly::Polyline, i::Int)
     C = coordinates(poly)

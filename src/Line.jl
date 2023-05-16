@@ -2,12 +2,12 @@
     Line(a::Vec, b::Vec)
     Line(a::Vec => b::Vec)
 """
-struct Line{dim, T} <: Geometry{dim, T}
-    coordinates::SVector{2, Vec{dim, T}}
+mutable struct Line{dim, T} <: Geometry{dim, T}
+    coordinates::MVector{2, Vec{dim, T}}
     q::Quaternion{T}
 end
 
-Line(a::Vec, b::Vec) = Geometry(Line, @SVector[a, b])
+Line(a::Vec, b::Vec) = Geometry(Line, MVector(a,b))
 Line(pair::Pair) = Line(pair.first, pair.second)
 
 centroid(line::Line) = mean(coordinates(line))

@@ -42,7 +42,7 @@ inv_moment_of_inertia(I::Real) = inv(I)
 Translate `object` by the displacement `u`.
 """
 function translate!(obj::GeometricObject, u::Vec)
-    obj.geometry = translate(geometry(obj), u)
+    translate!(geometry(obj), u)
     obj
 end
 
@@ -53,7 +53,7 @@ Rotate `object` by the angle vector `θ`.
 `normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
 """
 function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
-    obj.geometry = rotate(geometry(obj), θ)
+    rotate!(geometry(obj), θ)
     obj
 end
 
