@@ -22,8 +22,10 @@ function translate!(geometry::Geometry, u::Vec)
     @inbounds @simd for i in eachindex(coords)
         coords[i] += u
     end
+    _translate!(geometry, u)
     geometry
 end
+_translate!(geometry::Geometry, u::Vec) = nothing
 
 """
     rotate!(geo::Geometry{2}, θ::Real)
@@ -32,10 +34,7 @@ end
 Rotate `geo` by the angle `θ`.
 In 3D, `normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
 """
-function rotate! end
-rotate!(geometry::Geometry{3}, θ::Vec{3}) = _rotate!(geometry, θ)
-rotate!(geometry::Geometry{2}, θ::Real) = _rotate!(geometry, Vec(0,0,θ))
-function _rotate!(geometry::Geometry{dim}, θ::Vec) where {dim}
+function rotate!(geometry::Geometry{dim}, θ::Vec{3}) where {dim}
     # https://www.ashwinnarayan.com/post/how-to-integrate-quaternions/
     coords = coordinates(geometry)
     q = exp(Quaternion(θ/2))
@@ -44,8 +43,11 @@ function _rotate!(geometry::Geometry{dim}, θ::Vec) where {dim}
         coords[i] = xc + Tensorial.resizedim(rotate(coords[i] - xc, q), Val(dim))
     end
     geometry.q = q * geometry.q
+    _rotate!(geometry, θ)
     geometry
 end
+rotate!(geometry::Geometry{2}, θ::Real) = rotate!(geometry, Vec(0,0,θ))
+_rotate!(geometry::Geometry, θ::Vec) = nothing
 
 isinside(geo::Geometry) = Base.Fix2(isinside, geo)
 
