@@ -10,10 +10,6 @@ num_coordinates(x::Geometry) = length(coordinates(x))
 coordinates(x::Geometry) = x.coordinates
 coordinates(x::Geometry, i::Int) = (@_propagate_inbounds_meta; coordinates(x)[i])
 quaternion(x::Geometry) = x.q
-function attitude(x::Geometry{dim, T}) where {dim, T}
-    v = rotate(Vec{3,T}(1,0,0), quaternion(x))
-    @Tensor v[1:dim]
-end
 moment_of_inertia(x::Geometry) = throw(ArgumentError("$(typeof(x)) is not supported yet."))
 
 """
@@ -57,6 +53,6 @@ Broadcast.broadcastable(geo::Geometry) = (geo,)
 
 function Base.show(io::IO, mime::MIME"text/plain", x::Geometry)
     print(io, typeof(x), ":\n")
-    print(io, "  Coordinates: [", join(coordinates(x), ", "), "]\n")
-    print(io, "  Attitude: ", attitude(x))
+    print(io, "  Centroid: ", centroid(x), "\n")
+    print(io, "  Quaternion: ", quaternion(x))
 end

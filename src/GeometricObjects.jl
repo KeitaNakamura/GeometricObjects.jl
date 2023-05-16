@@ -27,7 +27,6 @@ export
     rotate!,
     coordinates,
     num_coordinates,
-    attitude,
 # Line
     Line,
     ison,
