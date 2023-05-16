@@ -59,8 +59,8 @@ Check if a point `isinside` a sphere.
 ```jldoctest
 julia> sphere = Sphere(Vec(1.0,1.0,1.0), 1.0)
 Sphere{3, Float64}:
-  Coordinates: [[1.0, 1.0, 1.0]]
-  Attitude: [1.0, 0.0, 0.0]
+  Centroid: [1.0, 1.0, 1.0]
+  Quaternion: 1.0 + 0.0𝙞 + 0.0𝙟 + 0.0𝙠
 
 julia> isinside(Vec(0.5, 0.5, 0.5), sphere)
 true
@@ -86,10 +86,10 @@ When `threshold` is given, check the contact between line and point `x`,
 and return `nothing` if contact is not detected.
 
 ```jldoctest
-julia> sphere = Sphere(Vec(1.0,1.0), 1.0)
-Sphere{2, Float64}:
-  Coordinates: [[1.0, 1.0]]
-  Attitude: [1.0, 0.0]
+julia> sphere = Sphere(Vec(1.0,1.0,1.0), 1.0)
+Sphere{3, Float64}:
+  Centroid: [1.0, 1.0, 1.0]
+  Quaternion: 1.0 + 0.0𝙞 + 0.0𝙟 + 0.0𝙠
 
 julia> d = distance(sphere, Vec(0.0,0.0,0.0))
 3-element Vec{3, Float64}:

@@ -54,8 +54,8 @@ and return `nothing` if contact is not detected.
 ```jldoctest
 julia> line = Line(Vec(0.0, 0.0) => Vec(1.0, 1.0))
 Line{2, Float64}:
-  Coordinates: [[0.0, 0.0], [1.0, 1.0]]
-  Attitude: [1.0, 0.0]
+  Centroid: [0.5, 0.5]
+  Quaternion: 1.0 + 0.0𝙞 + 0.0𝙟 + 0.0𝙠
 
 julia> distance(line, Vec(1.0, 0.0))
 2-element Vec{2, Float64}:
@@ -111,8 +111,8 @@ Check if a point `ison` line.
 ```jldoctest
 julia> line = Line(Vec(0.0, 0.0), Vec(2.0, 2.0))
 Line{2, Float64}:
-  Coordinates: [[0.0, 0.0], [2.0, 2.0]]
-  Attitude: [1.0, 0.0]
+  Centroid: [1.0, 1.0]
+  Quaternion: 1.0 + 0.0𝙞 + 0.0𝙟 + 0.0𝙠
 
 julia> ison(Vec(1.0, 1.0), line)
 true
