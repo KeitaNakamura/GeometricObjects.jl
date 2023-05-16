@@ -9,5 +9,5 @@ centroid(geo::FinitePoints) = mean(coordinates(geo))
 
 function moment_of_inertia(geo::FinitePoints)
     coords = coordinates(geo)
-    sum(x -> (x⋅x)*I-x⊗x, coords) / length(coords)
+    sum(x -> (x⋅x)*I-symmetric(x⊗x,:U), coords) / length(coords)
 end
