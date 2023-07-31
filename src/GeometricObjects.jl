@@ -46,6 +46,7 @@ export
     GeometricObject,
     update_geometry!,
     apply_force!,
+    velocityat,
 # VTK
     vtk_grid
 

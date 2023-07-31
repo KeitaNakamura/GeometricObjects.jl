@@ -98,6 +98,41 @@ _cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D cas
 
 Broadcast.broadcastable(geo::GeometricObject) = (geo,)
 
+"""
+    velocityat(object::GeometricObject, x::Vec)
+
+Compute the velocity of arbitrary point `x` associated with `object`.
+This function does not check if the point `x` is in `object`.
+
+# Examples
+```jldoctest
+julia> circle = GeometricObject(Circle(Vec(0.0,0.0)), 1.0)
+GeometricObjects.GeometricObject2D{Float64, Circle{2, Float64}}:
+  Circle{2, Float64}:
+    Centroid: [0.0, 0.0]
+    Quaternion: 1.0 + 0.0𝙞 + 0.0𝙟 + 0.0𝙠
+  Mass: 1.0
+  Velocity: [0.0, 0.0]
+  Angular velocity: 0.0
+
+julia> circle.v = Vec(1.0, 2.0);
+
+julia> circle.ω = π;
+
+julia> velocityat(circle, Vec(0.5,0.0)) == Vec(1.0, 2.0) + Vec(0.0, π/2)
+true
+```
+"""
+@inline function velocityat(obj::GeometricObject{2}, x::Vec{2})
+    r = x - centroid(geometry(obj))
+    v3 = Vec(0,0,obj.ω) × [r;0]
+    obj.v + @Tensor v3[1:2]
+end
+@inline function velocityat(obj::GeometricObject{3}, x::Vec{3})
+    r = x - centroid(geometry(obj))
+    obj.v + obj.ω × r
+end
+
 function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
     print(io, typeof(x), ":\n")
     buf = IOBuffer()
