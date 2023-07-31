@@ -98,6 +98,16 @@ _cross(x::Real, y::Real) = zero(promote_type(typeof(x), typeof(y))) # for 2D cas
 
 Broadcast.broadcastable(geo::GeometricObject) = (geo,)
 
+@inline function velocityat(obj::GeometricObject{2}, x::Vec{2})
+    r = x - centroid(geometry(obj))
+    v3 = Vec(0,0,obj.ω) × [r;0]
+    obj.v + @Tensor v3[1:2]
+end
+@inline function velocityat(obj::GeometricObject{3}, x::Vec{3})
+    r = x - centroid(geometry(obj))
+    obj.v + obj.ω × r
+end
+
 function Base.show(io::IO, mime::MIME"text/plain", x::GeometricObject)
     print(io, typeof(x), ":\n")
     buf = IOBuffer()

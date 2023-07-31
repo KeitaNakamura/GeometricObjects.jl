@@ -33,4 +33,22 @@
         @test norm(coordinates(line, 2) - coordinates(line, 1)) ≈ norm(v)
         @test (x = coordinates(line, 2) - coordinates(line, 1); atan(x[2]/x[1])) ≈ 1
     end
+    @testset "velocityat" begin
+        for T in (Float32, Float64)
+            # 2D
+            obj = GeometricObject(Polygon(Vec{2,T}(0.0,0.0), Vec{2,T}(1.0,0.0), Vec{2,T}(0.0,1.0)))
+            obj.v = rand(Vec{2,T})
+            obj.ω = rand(T)
+            x = rand(Vec{2,T})
+            vʳ = Vec(0,0,obj.ω) × [x - centroid(geometry(obj)); 0]
+            @test vʳ[3] == 0
+            @test (@inferred velocityat(obj, x))::Vec{2,T} == obj.v + vʳ[1:2]
+            # 3D
+            obj = GeometricObject(Sphere(rand(Vec{3,T}), rand(T)))
+            obj.v = rand(Vec{3,T})
+            obj.ω = rand(Vec{3,T})
+            x = rand(Vec{3,T})
+            @test (@inferred velocityat(obj, x))::Vec{3,T} == obj.v + obj.ω × (x - centroid(geometry(obj)))
+        end
+    end
 end
