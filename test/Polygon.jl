@@ -64,6 +64,13 @@
     rotate!(poly, π/2)
     @test centroid(poly) ≈ [0.5,0.5]
     @test coordinates(poly) ≈ [[0.5+1/√2, 0.5], [0.5, 0.5+1/√2], [0.5-1/√2, 0.5], [0.5, 0.5-1/√2]]
+
+    # rotate! with origin
+    poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))
+    rotate!(poly, π, Vec(0.0,0.0))
+    @test centroid(poly) ≈ [-0.5,-0.5]
+    @test coordinates(poly) ≈ [[0.0, 0.0], [-1.0, 0.0], [-1.0, -1.0], [0.0, -1.0]]
+
     # translate!
     poly = Polygon(Vec(0.0,0.0), Vec(1.0,0.0), Vec(1.0,1.0), Vec(0.0,1.0))
     @test coordinates(@inferred translate!(poly, Vec(0.4, 0.3))) ≈ [Vec(0.4,0.3), Vec(1.4,0.3), Vec(1.4,1.3), Vec(0.4,1.3)]

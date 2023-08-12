@@ -52,8 +52,8 @@ end
 Rotate `object` by the angle vector `θ`.
 `normalize(θ)` and `norm(θ)` should represent the rotation axis and the angle (radian), respectively.
 """
-function rotate!(obj::GeometricObject, θ::Union{Vec, Real})
-    rotate!(geometry(obj), θ)
+function rotate!(obj::GeometricObject, θ::Union{Vec, Real}, x::Vec = centroid(obj))
+    rotate!(geometry(obj), θ, x)
     obj
 end
 
